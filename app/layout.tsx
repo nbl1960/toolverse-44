@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/layout/header";
@@ -64,7 +65,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   verification: {
-    google: "oa2BFUanVORqyy5u5K5uj6rspoSKPImomaTN3d77QIk",
+    google: "zCzwINk4DenE-4CRXWeApagQ4AmzWLinGo6hTCgZ2xk",
   },
 };
 
@@ -104,6 +105,7 @@ export default function RootLayout({
           </div>
           <Toaster position="bottom-right" richColors closeButton />
         </ThemeProvider>
+        <GoogleAnalytics gaId="G-Q76GHJ333K" />
       </body>
     </html>
   );

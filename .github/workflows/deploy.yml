@@ -1,0 +1,42 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+  # Lets you trigger a deploy manually from the Actions tab without a push.
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build and deploy to Cloudflare Workers
+        run: npm run deploy
+        env:
+          # Baked into the static build output (safe to expose — it's a
+          # public URL, not a secret). The actual ANTHROPIC_API_KEY is a
+          # Worker secret set once via `wrangler secret put`, not passed
+          # through CI at all.
+          NEXT_PUBLIC_SITE_URL: https://toolsverse.co
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

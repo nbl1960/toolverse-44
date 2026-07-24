@@ -1,0 +1,10 @@
+# Local-only variables for `wrangler dev` / `opennextjs-cloudflare preview`.
+# Copy this file to `.dev.vars` (which is gitignored) and fill in real
+# values. This is separate from `.env.local`, which `next dev` itself
+# reads — see the README for when each one applies.
+#
+# For production, do NOT put this value in wrangler.jsonc or any committed
+# file. Set it as a Worker secret instead:
+#   wrangler secret put ANTHROPIC_API_KEY
+
+ANTHROPIC_API_KEY=sk-ant-your-key-here

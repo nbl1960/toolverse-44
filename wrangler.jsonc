@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "toolverse",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Serves the pre-rendered static output (SSG pages, images, fonts, etc.)
+  // directly from Cloudflare's asset storage instead of round-tripping
+  // through the Worker, matching how OpenNext expects assets to be wired.
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  // Non-secret configuration available to the Worker via process.env.
+  // ANTHROPIC_API_KEY is NOT here on purpose — see the deployment guide:
+  // it must be set as a Worker secret (`wrangler secret put`), never
+  // committed to this file or the repo.
+  "vars": {
+    "NEXT_PUBLIC_SITE_URL": "https://toolsverse.co"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}
