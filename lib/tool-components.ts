@@ -188,6 +188,86 @@ const TOOL_COMPONENT_LOADERS: Record<string, ComponentLoader> = {
     import("@/components/tools/linkedin-profile-seo-checker/linkedin-profile-seo-checker").then(
       (m) => ({ default: m.LinkedinProfileSeoChecker })
     ),
+  "twitter-tweet-generator": () =>
+    import("@/components/tools/twitter-tweet-generator/twitter-tweet-generator").then((m) => ({
+      default: m.TwitterTweetGenerator,
+    })),
+  "twitter-viral-tweet-generator": () =>
+    import("@/components/tools/twitter-viral-tweet-generator/twitter-viral-tweet-generator").then(
+      (m) => ({ default: m.TwitterViralTweetGenerator })
+    ),
+  "twitter-thread-generator": () =>
+    import("@/components/tools/twitter-thread-generator/twitter-thread-generator").then((m) => ({
+      default: m.TwitterThreadGenerator,
+    })),
+  "twitter-bio-generator": () =>
+    import("@/components/tools/twitter-bio-generator/twitter-bio-generator").then((m) => ({
+      default: m.TwitterBioGenerator,
+    })),
+  "twitter-username-generator": () =>
+    import("@/components/tools/twitter-username-generator/twitter-username-generator").then(
+      (m) => ({ default: m.TwitterUsernameGenerator })
+    ),
+  "twitter-hashtag-generator": () =>
+    import("@/components/tools/twitter-hashtag-generator/twitter-hashtag-generator").then((m) => ({
+      default: m.TwitterHashtagGenerator,
+    })),
+  "twitter-hook-generator": () =>
+    import("@/components/tools/twitter-hook-generator/twitter-hook-generator").then((m) => ({
+      default: m.TwitterHookGenerator,
+    })),
+  "twitter-poll-generator": () =>
+    import("@/components/tools/twitter-poll-generator/twitter-poll-generator").then((m) => ({
+      default: m.TwitterPollGenerator,
+    })),
+  "twitter-reply-generator": () =>
+    import("@/components/tools/twitter-reply-generator/twitter-reply-generator").then((m) => ({
+      default: m.TwitterReplyGenerator,
+    })),
+  "twitter-content-calendar": () =>
+    import("@/components/tools/twitter-content-calendar/twitter-content-calendar").then((m) => ({
+      default: m.TwitterContentCalendar,
+    })),
+  "facebook-caption-generator": () =>
+    import("@/components/tools/facebook-caption-generator/facebook-caption-generator").then(
+      (m) => ({ default: m.FacebookCaptionGenerator })
+    ),
+  "facebook-post-generator": () =>
+    import("@/components/tools/facebook-post-generator/facebook-post-generator").then((m) => ({
+      default: m.FacebookPostGenerator,
+    })),
+  "facebook-bio-generator": () =>
+    import("@/components/tools/facebook-bio-generator/facebook-bio-generator").then((m) => ({
+      default: m.FacebookBioGenerator,
+    })),
+  "facebook-ad-copy-generator": () =>
+    import("@/components/tools/facebook-ad-copy-generator/facebook-ad-copy-generator").then(
+      (m) => ({ default: m.FacebookAdCopyGenerator })
+    ),
+  "facebook-headline-generator": () =>
+    import("@/components/tools/facebook-headline-generator/facebook-headline-generator").then(
+      (m) => ({ default: m.FacebookHeadlineGenerator })
+    ),
+  "facebook-cta-generator": () =>
+    import("@/components/tools/facebook-cta-generator/facebook-cta-generator").then((m) => ({
+      default: m.FacebookCtaGenerator,
+    })),
+  "facebook-comment-generator": () =>
+    import("@/components/tools/facebook-comment-generator/facebook-comment-generator").then(
+      (m) => ({ default: m.FacebookCommentGenerator })
+    ),
+  "facebook-event-description-generator": () =>
+    import(
+      "@/components/tools/facebook-event-description-generator/facebook-event-description-generator"
+    ).then((m) => ({ default: m.FacebookEventDescriptionGenerator })),
+  "facebook-group-description-generator": () =>
+    import(
+      "@/components/tools/facebook-group-description-generator/facebook-group-description-generator"
+    ).then((m) => ({ default: m.FacebookGroupDescriptionGenerator })),
+  "facebook-hashtag-generator": () =>
+    import("@/components/tools/facebook-hashtag-generator/facebook-hashtag-generator").then(
+      (m) => ({ default: m.FacebookHashtagGenerator })
+    ),
 };
 
 /** Returns the component loader for a tool's slug, or undefined if it has none yet. */

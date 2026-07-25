@@ -49,6 +49,15 @@ import {
   Gauge,
   Search,
   Briefcase,
+  MessageSquare,
+  Flame,
+  ListOrdered,
+  Anchor,
+  Reply,
+  Calendar,
+  MousePointerClick,
+  CalendarDays,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -112,6 +121,15 @@ export const ICON_MAP = {
   Gauge,
   Search,
   Briefcase,
+  MessageSquare,
+  Flame,
+  ListOrdered,
+  Anchor,
+  Reply,
+  Calendar,
+  MousePointerClick,
+  CalendarDays,
+  Users,
 } satisfies Record<string, LucideIcon>;
 
 /** The set of valid icon names a `ToolDefinition.iconName` or `Category.iconName` can use. */

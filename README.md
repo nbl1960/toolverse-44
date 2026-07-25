@@ -1,10 +1,10 @@
 # ToolVerse
 
 A scalable, production-ready platform for hosting many focused web tools
-under one roof. Ships today with **43 live tools** — AI Email Writer, a
-complete "Phase 1 Finance" suite of 9 calculators, a 20-tool "Creator
-Studio" suite spanning YouTube and Instagram, and a 13-tool "LinkedIn
-Studio" suite — and
+under one roof. Ships today with **63 live tools** — AI Email Writer, a
+complete "Phase 1 Finance" suite of 9 calculators, a 40-tool "Creator
+Studio" suite spanning YouTube, Instagram, X (Twitter), and Facebook, and
+a 13-tool "LinkedIn Studio" suite — and
 an architecture designed to grow to 100+ tools without touching routing
 code.
 
@@ -178,6 +178,46 @@ the shared 3-options engine: the Optimizer returns a critique + rewrite
 deterministic — no Gemini call, no API cost, instant results — with every
 point in their scores tied to one specific, visible, named check rather
 than a black-box number.
+
+**Tools #44–53 — Creator Studio (X / Twitter tools)**
+
+| Tool | Route | Kind |
+|---|---|---|
+| Twitter Tweet Generator | `/tools/twitter-tweet-generator` | AI, 3 options |
+| Twitter Viral Tweet Generator | `/tools/twitter-viral-tweet-generator` | AI, 3 options |
+| Twitter Thread Generator | `/tools/twitter-thread-generator` | AI, 3 options |
+| Twitter Bio Generator | `/tools/twitter-bio-generator` | AI, 3 options |
+| Twitter Username Generator | `/tools/twitter-username-generator` | AI, 3 options |
+| Twitter Hashtag Generator | `/tools/twitter-hashtag-generator` | AI, 3 options |
+| Twitter Hook Generator | `/tools/twitter-hook-generator` | AI, 3 options |
+| Twitter Poll Generator | `/tools/twitter-poll-generator` | AI, 3 options |
+| Twitter Reply Generator | `/tools/twitter-reply-generator` | AI, 3 options |
+| Twitter Content Calendar | `/tools/twitter-content-calendar` | AI, 3 weekly-calendar options |
+
+**Tools #54–63 — Creator Studio (Facebook tools)**
+
+| Tool | Route | Kind |
+|---|---|---|
+| Facebook Caption Generator | `/tools/facebook-caption-generator` | AI, 3 options |
+| Facebook Post Generator | `/tools/facebook-post-generator` | AI, 3 options |
+| Facebook Bio Generator | `/tools/facebook-bio-generator` | AI, 3 options |
+| Facebook Ad Copy Generator | `/tools/facebook-ad-copy-generator` | AI, 3 options |
+| Facebook Headline Generator | `/tools/facebook-headline-generator` | AI, 3 options |
+| Facebook CTA Generator | `/tools/facebook-cta-generator` | AI, 3 options |
+| Facebook Comment Generator | `/tools/facebook-comment-generator` | AI, 3 options |
+| Facebook Event Description Generator | `/tools/facebook-event-description-generator` | AI, 3 options |
+| Facebook Group Description Generator | `/tools/facebook-group-description-generator` | AI, 3 options |
+| Facebook Hashtag Generator | `/tools/facebook-hashtag-generator` | AI, 3 options |
+
+Both toolsets are the fourth and fifth platforms on the same shared
+engine — no changes to `ai-generator-view.tsx`, `lib/generator-api.ts`,
+or `lib/gemini.ts` were needed. Unlike LinkedIn Studio, X and Facebook
+tools rejoin the `creator-studio` category (same content-creator audience
+as YouTube/Instagram) with `relatedGroup: "twitter"` /
+`relatedGroup: "facebook"`, so each toolset's Related Tools rail
+recommends only its own nine siblings — Creator Studio now spans four
+platforms in one category without any toolset's recommendations blending
+into another's.
 
 **The shared finance layer this suite is built on**
 
