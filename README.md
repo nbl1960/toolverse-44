@@ -1,10 +1,10 @@
 # ToolVerse
 
 A scalable, production-ready platform for hosting many focused web tools
-under one roof. Ships today with **63 live tools** — AI Email Writer, a
+under one roof. Ships today with **83 live tools** — AI Email Writer, a
 complete "Phase 1 Finance" suite of 9 calculators, a 40-tool "Creator
-Studio" suite spanning YouTube, Instagram, X (Twitter), and Facebook, and
-a 13-tool "LinkedIn Studio" suite — and
+Studio" suite spanning YouTube, Instagram, X (Twitter), and Facebook, a
+13-tool "LinkedIn Studio" suite, and 20 SEO/Developer utilities — and
 an architecture designed to grow to 100+ tools without touching routing
 code.
 
@@ -218,6 +218,61 @@ as YouTube/Instagram) with `relatedGroup: "twitter"` /
 recommends only its own nine siblings — Creator Studio now spans four
 platforms in one category without any toolset's recommendations blending
 into another's.
+
+**Tools #64–73 — SEO Studio**
+
+| Tool | Route | Kind |
+|---|---|---|
+| Meta Title Generator | `/tools/seo-meta-title-generator` | AI, 3 options |
+| Meta Description Generator | `/tools/seo-meta-description-generator` | AI, 3 options |
+| Robots.txt Generator | `/tools/seo-robots-txt-generator` | Deterministic form builder |
+| Sitemap Generator | `/tools/seo-sitemap-generator` | Deterministic form builder |
+| Canonical URL Generator | `/tools/seo-canonical-url-generator` | Deterministic — URL normalization |
+| Open Graph Generator | `/tools/seo-open-graph-generator` | Deterministic form builder |
+| Twitter Card Generator | `/tools/seo-twitter-card-generator` | Deterministic form builder |
+| Schema Generator | `/tools/seo-schema-generator` | Deterministic — 5 schema.org types |
+| FAQ Schema Generator | `/tools/seo-faq-schema-generator` | Deterministic — parses Q&A pairs |
+| Keyword Density Checker | `/tools/seo-keyword-density-checker` | Deterministic — word frequency analysis |
+
+**Tools #74–83 — Developer Studio**
+
+| Tool | Route | Kind |
+|---|---|---|
+| JSON Formatter | `/tools/dev-json-formatter` | Deterministic |
+| JSON Validator | `/tools/dev-json-validator` | Deterministic |
+| Base64 Encoder | `/tools/dev-base64-encoder` | Deterministic — UTF-8 safe |
+| Base64 Decoder | `/tools/dev-base64-decoder` | Deterministic — UTF-8 safe |
+| UUID Generator | `/tools/dev-uuid-generator` | Deterministic — crypto.randomUUID() |
+| Password Generator | `/tools/dev-password-generator` | Deterministic — crypto.getRandomValues() |
+| Hash Generator | `/tools/dev-hash-generator` | Deterministic — Web Crypto API (SHA-1/256/384/512) |
+| HTML Minifier | `/tools/dev-html-minifier` | Deterministic — comment/whitespace only |
+| CSS Minifier | `/tools/dev-css-minifier` | Deterministic — comment/whitespace only |
+| JavaScript Minifier | `/tools/dev-javascript-minifier` | Deterministic — comment/whitespace only |
+
+This batch is architecturally different from every prior one: only the
+two Meta Title/Description tools are AI generators (the sixth platform on
+the shared engine, via `lib/tools/seo-generator/`). The other 18 are
+genuine deterministic utilities — no Gemini call, instant, free to run.
+
+Seven of them (JSON Formatter/Validator, Base64 Encode/Decode, and the
+three minifiers) share a new component,
+`components/shared/text-transform-tool.tsx` — one "paste text, transform
+it, copy the result" implementation instead of seven near-identical UIs.
+
+The three minifiers share `lib/minify.ts`, a hand-written,
+string/template-literal/regex-aware tokenizer that strips comments and
+collapses blank lines — deliberately conservative. It never joins lines
+or removes whitespace between tokens, because a more aggressive
+whitespace-collapsing minifier can silently break code that relies on
+JavaScript's automatic semicolon insertion. This logic was verified with
+an actual test suite (not just reasoned about): edge cases like URLs
+inside strings, regex-literal-vs-division disambiguation, and
+comment-like text inside template literals, plus executing the minified
+output of a realistic snippet to confirm it still runs correctly. MD5 is
+deliberately not offered in the Hash Generator — it isn't part of the
+Web Crypto API by design, and a hand-rolled implementation couldn't be
+verified against a trusted reference in this environment, so it was left
+out rather than shipped unverified.
 
 **The shared finance layer this suite is built on**
 

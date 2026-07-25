@@ -58,6 +58,17 @@ import {
   MousePointerClick,
   CalendarDays,
   Users,
+  Bot,
+  Map,
+  Link,
+  Share2,
+  LayoutTemplate,
+  HelpCircle,
+  ShieldCheck,
+  Unlock,
+  Fingerprint,
+  Code,
+  FileCode,
   type LucideIcon,
 } from "lucide-react";
 
@@ -130,6 +141,17 @@ export const ICON_MAP = {
   MousePointerClick,
   CalendarDays,
   Users,
+  Bot,
+  Map,
+  Link,
+  Share2,
+  LayoutTemplate,
+  HelpCircle,
+  ShieldCheck,
+  Unlock,
+  Fingerprint,
+  Code,
+  FileCode,
 } satisfies Record<string, LucideIcon>;
 
 /** The set of valid icon names a `ToolDefinition.iconName` or `Category.iconName` can use. */

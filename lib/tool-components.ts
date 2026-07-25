@@ -268,6 +268,86 @@ const TOOL_COMPONENT_LOADERS: Record<string, ComponentLoader> = {
     import("@/components/tools/facebook-hashtag-generator/facebook-hashtag-generator").then(
       (m) => ({ default: m.FacebookHashtagGenerator })
     ),
+  "seo-meta-title-generator": () =>
+    import("@/components/tools/seo-meta-title-generator/seo-meta-title-generator").then((m) => ({
+      default: m.SeoMetaTitleGenerator,
+    })),
+  "seo-meta-description-generator": () =>
+    import("@/components/tools/seo-meta-description-generator/seo-meta-description-generator").then(
+      (m) => ({ default: m.SeoMetaDescriptionGenerator })
+    ),
+  "seo-robots-txt-generator": () =>
+    import("@/components/tools/seo-robots-txt-generator/seo-robots-txt-generator").then((m) => ({
+      default: m.SeoRobotsTxtGenerator,
+    })),
+  "seo-sitemap-generator": () =>
+    import("@/components/tools/seo-sitemap-generator/seo-sitemap-generator").then((m) => ({
+      default: m.SeoSitemapGenerator,
+    })),
+  "seo-canonical-url-generator": () =>
+    import("@/components/tools/seo-canonical-url-generator/seo-canonical-url-generator").then(
+      (m) => ({ default: m.SeoCanonicalUrlGenerator })
+    ),
+  "seo-open-graph-generator": () =>
+    import("@/components/tools/seo-open-graph-generator/seo-open-graph-generator").then((m) => ({
+      default: m.SeoOpenGraphGenerator,
+    })),
+  "seo-twitter-card-generator": () =>
+    import("@/components/tools/seo-twitter-card-generator/seo-twitter-card-generator").then(
+      (m) => ({ default: m.SeoTwitterCardGenerator })
+    ),
+  "seo-schema-generator": () =>
+    import("@/components/tools/seo-schema-generator/seo-schema-generator").then((m) => ({
+      default: m.SeoSchemaGenerator,
+    })),
+  "seo-faq-schema-generator": () =>
+    import("@/components/tools/seo-faq-schema-generator/seo-faq-schema-generator").then((m) => ({
+      default: m.SeoFaqSchemaGenerator,
+    })),
+  "seo-keyword-density-checker": () =>
+    import("@/components/tools/seo-keyword-density-checker/seo-keyword-density-checker").then(
+      (m) => ({ default: m.SeoKeywordDensityChecker })
+    ),
+  "dev-json-formatter": () =>
+    import("@/components/tools/dev-json-formatter/dev-json-formatter").then((m) => ({
+      default: m.DevJsonFormatter,
+    })),
+  "dev-json-validator": () =>
+    import("@/components/tools/dev-json-validator/dev-json-validator").then((m) => ({
+      default: m.DevJsonValidator,
+    })),
+  "dev-base64-encoder": () =>
+    import("@/components/tools/dev-base64-encoder/dev-base64-encoder").then((m) => ({
+      default: m.DevBase64Encoder,
+    })),
+  "dev-base64-decoder": () =>
+    import("@/components/tools/dev-base64-decoder/dev-base64-decoder").then((m) => ({
+      default: m.DevBase64Decoder,
+    })),
+  "dev-uuid-generator": () =>
+    import("@/components/tools/dev-uuid-generator/dev-uuid-generator").then((m) => ({
+      default: m.DevUuidGenerator,
+    })),
+  "dev-password-generator": () =>
+    import("@/components/tools/dev-password-generator/dev-password-generator").then((m) => ({
+      default: m.DevPasswordGenerator,
+    })),
+  "dev-hash-generator": () =>
+    import("@/components/tools/dev-hash-generator/dev-hash-generator").then((m) => ({
+      default: m.DevHashGenerator,
+    })),
+  "dev-html-minifier": () =>
+    import("@/components/tools/dev-html-minifier/dev-html-minifier").then((m) => ({
+      default: m.DevHtmlMinifier,
+    })),
+  "dev-css-minifier": () =>
+    import("@/components/tools/dev-css-minifier/dev-css-minifier").then((m) => ({
+      default: m.DevCssMinifier,
+    })),
+  "dev-javascript-minifier": () =>
+    import("@/components/tools/dev-javascript-minifier/dev-javascript-minifier").then((m) => ({
+      default: m.DevJavascriptMinifier,
+    })),
 };
 
 /** Returns the component loader for a tool's slug, or undefined if it has none yet. */
