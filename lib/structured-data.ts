@@ -31,6 +31,27 @@ export function buildToolJsonLd(tool: ToolDefinition) {
   };
 }
 
+/**
+ * schema.org WebPage entry for an individual tool page — describes the
+ * page itself (as distinct from `SoftwareApplication`, which describes
+ * the tool it hosts). Rendered from `ToolPageShell`, the one component
+ * with direct access to the tool's full context.
+ */
+export function buildToolWebPageJsonLd(tool: ToolDefinition) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: tool.name,
+    description: tool.description,
+    url: `${SITE_URL}/tools/${tool.slug}`,
+    isPartOf: {
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+  };
+}
+
 /** schema.org FAQPage entry, built from a tool's `faq` list. */
 export function buildFaqJsonLd(items: FaqItem[]) {
   return {

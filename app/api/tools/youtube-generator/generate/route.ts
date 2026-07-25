@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import { generateGeminiText } from "@/lib/gemini";
 import { youtubeGeneratorFormSchema } from "@/lib/tools/youtube-generator/validations";
 import { YOUTUBE_GENERATOR_CONFIG } from "@/lib/tools/youtube-generator/constants";
 import type {
@@ -11,7 +11,6 @@ import type {
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const MODEL = "claude-sonnet-5";
 const OUTPUT_COUNT = 3;
 
 /** Basic in-memory rate limiter: N requests per IP per minute. */
@@ -55,7 +54,7 @@ Rules:
 {"outputs": ["...", "...", "..."]}`;
 }
 
-/** Extracts and parses the {outputs: [...]} JSON object from Claude's raw text reply. */
+/** Extracts and parses the {outputs: [...]} JSON object from Gemini's raw text reply. */
 function parseModelOutput(raw: string): string[] {
   const cleaned = raw
     .trim()
@@ -100,13 +99,13 @@ export async function POST(
       );
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
         {
           success: false,
           error:
-            "The server is missing an ANTHROPIC_API_KEY. Add it to your environment variables to enable generation.",
+            "The server is missing a GEMINI_API_KEY. Add it to your environment variables to enable generation.",
         },
         { status: 500 }
       );
@@ -133,21 +132,9 @@ export async function POST(
       );
     }
 
-    const client = new Anthropic({ apiKey });
     const prompt = buildPrompt(bodyRecord.type, parseResult.data.topic);
-
-    const message = await client.messages.create({
-      model: MODEL,
-      max_tokens: 1500,
-      messages: [{ role: "user", content: prompt }],
-    });
-
-    const textBlock = message.content.find((block) => block.type === "text");
-    if (!textBlock || textBlock.type !== "text") {
-      throw new Error("The model did not return any text.");
-    }
-
-    const outputs = parseModelOutput(textBlock.text);
+    const rawText = await generateGeminiText(prompt, apiKey);
+    const outputs = parseModelOutput(rawText);
 
     return NextResponse.json({ success: true, outputs }, { status: 200 });
   } catch (error) {

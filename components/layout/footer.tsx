@@ -87,7 +87,7 @@ export function Footer() {
       <div className="border-t border-border">
         <div className="container flex flex-col items-center justify-between gap-2 py-6 text-center text-xs text-muted-foreground sm:flex-row sm:text-left">
           <p>© {new Date().getFullYear()} {SITE_NAME}. Every tool starts here.</p>
-          <p>Built with Next.js &amp; Claude.</p>
+          <p>Built with Next.js &amp; Gemini.</p>
         </div>
       </div>
     </footer>

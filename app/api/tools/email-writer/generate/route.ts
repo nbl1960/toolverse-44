@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import { generateGeminiText } from "@/lib/gemini";
 import { emailFormSchema } from "@/lib/tools/email-writer/validations";
 import { LENGTH_OPTIONS, TONE_OPTIONS } from "@/lib/tools/email-writer/constants";
 import type { GenerateEmailResponse, GeneratedEmail } from "@/lib/tools/email-writer/types";
@@ -8,8 +8,6 @@ import type { GenerateEmailResponse, GeneratedEmail } from "@/lib/tools/email-wr
 // dynamically rather than be statically optimized.
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-const MODEL = "claude-sonnet-5";
 
 /** Basic in-memory rate limiter: N requests per IP per minute. */
 const RATE_LIMIT = 12;
@@ -32,7 +30,7 @@ function getClientIp(request: NextRequest): string {
   return request.headers.get("x-real-ip") ?? "unknown";
 }
 
-/** Builds the instruction prompt sent to Claude for a given, validated form. */
+/** Builds the instruction prompt sent to Gemini for a given, validated form. */
 function buildPrompt(input: {
   topic: string;
   recipientName: string;
@@ -71,7 +69,7 @@ Rules:
 - In the "body" field, use "\\n\\n" to separate paragraphs and "\\n" for line breaks (e.g. after the greeting, before the sign-off).`;
 }
 
-/** Extracts and parses the {subject, body} JSON object from Claude's raw text reply. */
+/** Extracts and parses the {subject, body} JSON object from Gemini's raw text reply. */
 function parseModelOutput(raw: string): GeneratedEmail {
   const cleaned = raw
     .trim()
@@ -105,13 +103,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateE
       );
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
         {
           success: false,
           error:
-            "The server is missing an ANTHROPIC_API_KEY. Add it to your environment variables to enable email generation.",
+            "The server is missing a GEMINI_API_KEY. Add it to your environment variables to enable email generation.",
         },
         { status: 500 }
       );
@@ -138,29 +136,14 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateE
 
     const { topic, recipientName, senderName, tone, length } = parseResult.data;
 
-    const client = new Anthropic({ apiKey });
     const prompt = buildPrompt({ topic, recipientName, senderName, tone, length });
-
-    const message = await client.messages.create({
-      model: MODEL,
-      max_tokens: 1200,
-      messages: [{ role: "user", content: prompt }],
-    });
-
-    const textBlock = message.content.find((block) => block.type === "text");
-    if (!textBlock || textBlock.type !== "text") {
-      throw new Error("The model did not return any text.");
-    }
-
-    const email = parseModelOutput(textBlock.text);
+    const rawText = await generateGeminiText(prompt, apiKey);
+    const email = parseModelOutput(rawText);
 
     return NextResponse.json({ success: true, email }, { status: 200 });
   } catch (error) {
     console.error("[/api/tools/email-writer/generate] Generation failed:", error);
-    const message =
-      error instanceof Error
-        ? error.message
-        : "Something went wrong while generating your email.";
+    const message = error instanceof Error ? error.message : "Something went wrong while generating your email.";
     return NextResponse.json(
       { success: false, error: `Couldn't generate the email: ${message}` },
       { status: 502 }

@@ -8,7 +8,7 @@ an architecture designed to grow to 100+ tools without touching routing
 code.
 
 Built with Next.js 15 (App Router), React, TypeScript, Tailwind CSS,
-shadcn/ui-style components, and the Anthropic API.
+shadcn/ui-style components, and the Google Gemini API.
 
 ---
 
@@ -71,7 +71,7 @@ Categories work the same way: `lib/categories.ts` is the registry,
 
 **Tool #1 — AI Email Writer** (Writing)
 Topic/recipient/sender inputs, 8 tones, 3 lengths, server-side generation
-via the Anthropic API with zod validation and rate limiting.
+via the Google Gemini API with zod validation and rate limiting.
 
 **Tools #2–10 — the Phase 1 Finance suite**
 
@@ -340,8 +340,8 @@ CAGR), not seven.
 
 - Node.js **18.18+** (Node 20 LTS recommended)
 - npm 9+
-- An [Anthropic API key](https://console.anthropic.com/settings/keys) (used
-  by the Email Writer tool)
+- A [Google Gemini API key](https://aistudio.google.com/apikey) (used by
+  the Email Writer tool and the Creator Studio YouTube tools)
 
 ## 1. Install
 
@@ -357,14 +357,14 @@ cp .env.example .env.local
 
 ```env
 # .env.local
-ANTHROPIC_API_KEY=sk-ant-your-key-here
+GEMINI_API_KEY=your-gemini-api-key-here
 
 # Optional — used for SEO metadata (Open Graph URLs, sitemap, robots.txt)
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
 ```
 
-`ANTHROPIC_API_KEY` is read only on the server, inside
-`app/api/tools/email-writer/generate/route.ts` — never exposed to the browser.
+`GEMINI_API_KEY` is read only on the server, inside `lib/gemini.ts` (the
+shared helper both AI tools call) — never exposed to the browser.
 
 ## 3. Run the dev server
 
@@ -390,27 +390,47 @@ npm run start
 
 ---
 
-## Deploying to Vercel
+## Deploying to Cloudflare Workers
 
-### Option A — Vercel CLI
+This project deploys via [OpenNext's Cloudflare adapter](https://opennext.js.org/cloudflare)
+(`@opennextjs/cloudflare`), not Cloudflare Pages — Cloudflare deprecated
+the Pages-specific Next.js adapter, and the Workers-based path is what
+supports this app's Node.js-runtime API routes (the AI generation
+endpoints).
+
+### First-time setup
 
 ```bash
-npm i -g vercel
-vercel
-vercel env add ANTHROPIC_API_KEY
-vercel --prod
+npx wrangler login
+npx wrangler secret put GEMINI_API_KEY
+npm run deploy
 ```
 
-### Option B — Vercel dashboard (Git-based)
+`npm run deploy` runs `opennextjs-cloudflare build` then
+`opennextjs-cloudflare deploy` — see `package.json` for the exact scripts,
+and `wrangler.jsonc` for the Worker's configuration (name, compatibility
+flags, static asset binding).
 
-1. Push this project to a GitHub/GitLab/Bitbucket repository.
-2. Import it at [vercel.com/new](https://vercel.com/new) — Next.js is
-   auto-detected, no build settings to change.
-3. Under **Settings → Environment Variables**, add:
-   - `ANTHROPIC_API_KEY` (required for the Email Writer tool)
-   - `NEXT_PUBLIC_SITE_URL` (optional, recommended for correct SEO/OG tags —
-     e.g. `https://toolverse.yourdomain.com`)
-4. Click **Deploy**. Every push to your main branch redeploys automatically.
+### Custom domain
+
+In the Cloudflare dashboard: **Workers & Pages → toolverse → Settings →
+Domains & Routes → Add → Custom Domain**. Add both your apex domain and
+`www` subdomain if you use both — `middleware.ts` handles redirecting one
+to the other.
+
+### Continuous deployment
+
+`.github/workflows/deploy.yml` builds and deploys automatically on every
+push to `main`. It needs two repository secrets (**Settings → Secrets and
+variables → Actions** in your GitHub repo):
+
+- `CLOUDFLARE_API_TOKEN` — create one at **My Profile → API Tokens**,
+  using the "Edit Cloudflare Workers" template
+- `CLOUDFLARE_ACCOUNT_ID` — shown in the Cloudflare dashboard sidebar on
+  any zone overview page
+
+`GEMINI_API_KEY` is never passed through CI — it's a Worker secret set
+once via `wrangler secret put`, independent of any given deploy.
 
 ---
 
@@ -426,7 +446,7 @@ vercel --prod
 | Validation  | zod                                       |
 | Toasts      | sonner                                    |
 | Theming     | next-themes                               |
-| AI          | Anthropic API (`@anthropic-ai/sdk`)       |
+| AI          | Google Gemini API (`gemini-flash-latest`, plain `fetch`)  |
 
 ---
 

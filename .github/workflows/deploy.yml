@@ -34,7 +34,7 @@ jobs:
         run: npm run deploy
         env:
           # Baked into the static build output (safe to expose — it's a
-          # public URL, not a secret). The actual ANTHROPIC_API_KEY is a
+          # public URL, not a secret). The actual GEMINI_API_KEY is a
           # Worker secret set once via `wrangler secret put`, not passed
           # through CI at all.
           NEXT_PUBLIC_SITE_URL: https://toolsverse.co

@@ -1,15 +1,38 @@
 import type { ReactNode } from "react";
+import dynamic from "next/dynamic";
 import { Clock } from "lucide-react";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { RelatedTools } from "@/components/shared/related-tools";
-import { Faq } from "@/components/shared/faq";
 import { FormulaSection } from "@/components/shared/formula-section";
 import { ExampleCalculation } from "@/components/shared/example-calculation";
-import { FeedbackSection } from "@/components/shared/feedback-section";
+import { JsonLd } from "@/components/shared/json-ld";
 import { getCategoryBySlug } from "@/lib/categories";
 import { resolveIcon } from "@/lib/icon-map";
 import { buildToolBreadcrumbs } from "@/lib/breadcrumbs";
+import { buildToolWebPageJsonLd } from "@/lib/structured-data";
 import type { ToolDefinition } from "@/lib/types";
+
+// Faq and FeedbackSection are the only two sections here with real
+// interactivity (accordion state, thumbs-up/down + a comment form) — the
+// rest (Breadcrumbs, FormulaSection, ExampleCalculation, RelatedTools) are
+// plain Server Components with no client JS cost, so splitting them out
+// would add boundary overhead for zero benefit. Faq/FeedbackSection are
+// also both below the fold on every tool page, so deferring their client
+// bundle keeps the JS needed for the above-the-fold, interactive tool UI
+// smaller — a direct Total Blocking Time / INP improvement. `ssr` is left
+// at its default (true): both still render into the initial server HTML,
+// so this is purely a client-bundle-splitting optimization, not a
+// visibility or SEO change — the FAQ text is exactly as crawlable as
+// before, and `loading: () => null` means there is no visible loading
+// state to introduce, since real content is already present on first
+// paint.
+const Faq = dynamic(() => import("@/components/shared/faq").then((m) => ({ default: m.Faq })), {
+  loading: () => null,
+});
+const FeedbackSection = dynamic(
+  () => import("@/components/shared/feedback-section").then((m) => ({ default: m.FeedbackSection })),
+  { loading: () => null }
+);
 
 interface ToolPageShellProps {
   tool: ToolDefinition;
@@ -22,6 +45,20 @@ interface ToolPageShellProps {
  * title block (icon, name, tagline, category), the tool's own UI, and a
  * related-tools rail. A new tool gets this whole page shell for free just
  * by having an entry in the registry — nothing here is duplicated per tool.
+ *
+ * SEO ownership, so nothing here ever gets duplicated elsewhere:
+ * - `WebPage` JSON-LD is emitted from here (below), since this component
+ *   is the one place with full context (tool + category + breadcrumbs).
+ * - `SoftwareApplication`, `BreadcrumbList`, and `FAQPage` JSON-LD are
+ *   emitted by `app/tools/[slug]/page.tsx`, not here — that's the route
+ *   file, so it's the correct owner, and duplicating them in this
+ *   component would emit the same structured data twice on one page.
+ * - Canonical URL, Open Graph, and Twitter Card tags cannot be set from
+ *   this file at all: Next.js only reads `generateMetadata` from
+ *   `page.tsx`/`layout.tsx` files, never from an ordinary component. Those
+ *   are correctly handled in `app/tools/[slug]/page.tsx` via
+ *   `generateMetadata` + `buildMetadata()`, which already sets
+ *   `alternates.canonical`, `openGraph`, and `twitter` for every tool page.
  */
 export function ToolPageShell({ tool, children }: ToolPageShellProps) {
   const category = getCategoryBySlug(tool.category);
@@ -29,6 +66,8 @@ export function ToolPageShell({ tool, children }: ToolPageShellProps) {
 
   return (
     <div className="container py-8 sm:py-10">
+      <JsonLd data={buildToolWebPageJsonLd(tool)} />
+
       <Breadcrumbs items={buildToolBreadcrumbs(tool)} />
 
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -37,7 +76,10 @@ export function ToolPageShell({ tool, children }: ToolPageShellProps) {
             <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
           </span>
           <div>
-            <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            <h1
+              id="tool-heading"
+              className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
+            >
               {tool.name}
             </h1>
             <p className="mt-0.5 text-sm text-muted-foreground sm:text-base">{tool.tagline}</p>
@@ -45,14 +87,15 @@ export function ToolPageShell({ tool, children }: ToolPageShellProps) {
         </div>
         {category && (
           <span className="inline-flex w-fit items-center rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
+            <span className="sr-only">Category: </span>
             {category.name}
           </span>
         )}
       </div>
 
-      <div className="mt-8">
+      <section aria-labelledby="tool-heading" className="mt-8">
         {tool.status === "live" ? children : <ComingSoonPanel tool={tool} />}
-      </div>
+      </section>
 
       {tool.formula && <FormulaSection formula={tool.formula} />}
 
@@ -67,7 +110,11 @@ export function ToolPageShell({ tool, children }: ToolPageShellProps) {
   );
 }
 
-function ComingSoonPanel({ tool }: { tool: ToolDefinition }) {
+interface ComingSoonPanelProps {
+  tool: ToolDefinition;
+}
+
+function ComingSoonPanel({ tool }: ComingSoonPanelProps) {
   return (
     <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border bg-card px-6 py-16 text-center">
       <span className="flex h-12 w-12 items-center justify-center rounded-full border border-border text-muted-foreground">

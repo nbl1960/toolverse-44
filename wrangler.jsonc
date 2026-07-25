@@ -14,7 +14,7 @@
   },
 
   // Non-secret configuration available to the Worker via process.env.
-  // ANTHROPIC_API_KEY is NOT here on purpose — see the deployment guide:
+  // GEMINI_API_KEY is NOT here on purpose — see the deployment guide:
   // it must be set as a Worker secret (`wrangler secret put`), never
   // committed to this file or the repo.
   "vars": {
