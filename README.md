@@ -1,9 +1,9 @@
 # ToolVerse
 
 A scalable, production-ready platform for hosting many focused web tools
-under one roof. Ships today with **20 live tools** — AI Email Writer, a
-complete "Phase 1 Finance" suite of 9 calculators, and a 10-tool "Creator
-Studio" suite for YouTube creators — and
+under one roof. Ships today with **30 live tools** — AI Email Writer, a
+complete "Phase 1 Finance" suite of 9 calculators, and a 20-tool "Creator
+Studio" suite spanning YouTube and Instagram tools — and
 an architecture designed to grow to 100+ tools without touching routing
 code.
 
@@ -119,6 +119,32 @@ all 8 live in one config file
 (`lib/tools/youtube-generator/constants.ts`). Every Creator Studio tool
 sets `relatedToolsLimit: 9` on its registry entry, so its Related Tools
 rail shows all nine siblings instead of the platform default of three.
+
+**Tools #21–30 — Creator Studio (Instagram tools)**
+
+| Tool | Route | Kind |
+|---|---|---|
+| Instagram Caption Generator | `/tools/instagram-caption-generator` | AI, 3 options |
+| Instagram Hashtag Generator | `/tools/instagram-hashtag-generator` | AI, 3 options |
+| Instagram Bio Generator | `/tools/instagram-bio-generator` | AI, 3 options |
+| Instagram Username Generator | `/tools/instagram-username-generator` | AI, 3 options |
+| Instagram Reel Caption Generator | `/tools/instagram-reel-caption-generator` | AI, 3 options |
+| Instagram Post Idea Generator | `/tools/instagram-post-idea-generator` | AI, 3 options |
+| Instagram Story Caption Generator | `/tools/instagram-story-caption-generator` | AI, 3 options |
+| Instagram Quote Generator | `/tools/instagram-quote-generator` | AI, 3 options |
+| Instagram Engagement Calculator | `/tools/instagram-engagement-calculator` | Deterministic — live client-side calculation, no API call |
+| Instagram Character Counter | `/tools/instagram-character-counter` | Deterministic — live client-side counting, no API call |
+
+The 8 Instagram AI tools reuse the exact same shared engine as YouTube's,
+one level further up: `components/shared/ai-generator-view.tsx` is the
+one presentational implementation both `YoutubeGeneratorTemplate` and
+`InstagramGeneratorTemplate` render (each owns only its own state hook
+and prompt config); `lib/generator-api.ts` and `lib/gemini.ts` are the
+one server-side implementation both API routes call. YouTube and
+Instagram tools share the `creator-studio` category (for browsing) but
+set `relatedGroup: "youtube"` / `relatedGroup: "instagram"` respectively,
+so each toolset's Related Tools rail recommends only its own nine
+siblings, not a mix of both.
 
 **The shared finance layer this suite is built on**
 
@@ -341,7 +367,7 @@ CAGR), not seven.
 - Node.js **18.18+** (Node 20 LTS recommended)
 - npm 9+
 - A [Google Gemini API key](https://aistudio.google.com/apikey) (used by
-  the Email Writer tool and the Creator Studio YouTube tools)
+  the Email Writer tool and the Creator Studio YouTube and Instagram tools)
 
 ## 1. Install
 

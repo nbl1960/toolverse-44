@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateGeminiText } from "@/lib/gemini";
 import { createRateLimiter, getClientIp, parseGeneratorOutputs } from "@/lib/generator-api";
-import { youtubeGeneratorFormSchema } from "@/lib/tools/youtube-generator/validations";
-import { YOUTUBE_GENERATOR_CONFIG } from "@/lib/tools/youtube-generator/constants";
+import { instagramGeneratorFormSchema } from "@/lib/tools/instagram-generator/validations";
+import { INSTAGRAM_GENERATOR_CONFIG } from "@/lib/tools/instagram-generator/constants";
 import type {
-  GenerateYoutubeContentResponse,
-  YoutubeGeneratorType,
-} from "@/lib/tools/youtube-generator/types";
+  GenerateInstagramContentResponse,
+  InstagramGeneratorType,
+} from "@/lib/tools/instagram-generator/types";
 
 // Calls a third-party API on every request; must run dynamically.
 export const dynamic = "force-dynamic";
@@ -15,18 +15,18 @@ export const runtime = "nodejs";
 const OUTPUT_COUNT = 3;
 const isRateLimited = createRateLimiter(15);
 
-function isValidGeneratorType(value: unknown): value is YoutubeGeneratorType {
-  return typeof value === "string" && value in YOUTUBE_GENERATOR_CONFIG;
+function isValidGeneratorType(value: unknown): value is InstagramGeneratorType {
+  return typeof value === "string" && value in INSTAGRAM_GENERATOR_CONFIG;
 }
 
-function buildPrompt(type: YoutubeGeneratorType, topic: string): string {
-  const config = YOUTUBE_GENERATOR_CONFIG[type];
+function buildPrompt(type: InstagramGeneratorType, topic: string): string {
+  const config = INSTAGRAM_GENERATOR_CONFIG[type];
 
-  return `You are an expert YouTube growth strategist and copywriter. A creator gives you a topic; you produce ${OUTPUT_COUNT} distinct, high-quality options for them to choose from.
+  return `You are an expert Instagram content strategist and copywriter. A creator gives you a topic; you produce ${OUTPUT_COUNT} distinct, high-quality options for them to choose from.
 
 Task: ${config.promptInstruction}
 
-Video topic: "${topic}"
+Post topic: "${topic}"
 
 Format requirements: ${config.formatHint}
 
@@ -39,7 +39,7 @@ Rules:
 
 export async function POST(
   request: NextRequest
-): Promise<NextResponse<GenerateYoutubeContentResponse>> {
+): Promise<NextResponse<GenerateInstagramContentResponse>> {
   try {
     const ip = getClientIp(request);
     if (isRateLimited(ip)) {
@@ -73,7 +73,7 @@ export async function POST(
       return NextResponse.json({ success: false, error: "Unknown generator type." }, { status: 400 });
     }
 
-    const parseResult = youtubeGeneratorFormSchema.safeParse({ topic: bodyRecord.topic });
+    const parseResult = instagramGeneratorFormSchema.safeParse({ topic: bodyRecord.topic });
     if (!parseResult.success) {
       const firstIssue = parseResult.error.issues[0];
       return NextResponse.json(
@@ -88,7 +88,7 @@ export async function POST(
 
     return NextResponse.json({ success: true, outputs }, { status: 200 });
   } catch (error) {
-    console.error("[/api/tools/youtube-generator/generate] Generation failed:", error);
+    console.error("[/api/tools/instagram-generator/generate] Generation failed:", error);
     const message = error instanceof Error ? error.message : "Something went wrong while generating.";
     return NextResponse.json(
       { success: false, error: `Couldn't generate content: ${message}` },

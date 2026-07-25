@@ -19,6 +19,15 @@ import { CAGR_FAQ_ITEMS, CAGR_FORMULA, CAGR_EXAMPLE } from "./tools/cagr-calcula
 import { YOUTUBE_GENERATOR_CONTENT } from "./tools/youtube-generator/tool-content";
 import { TIMESTAMP_FAQ_ITEMS, TIMESTAMP_EXAMPLE } from "./tools/youtube-timestamp-generator/constants";
 import { THUMBNAIL_FAQ_ITEMS, THUMBNAIL_EXAMPLE } from "./tools/youtube-thumbnail-downloader/constants";
+import { INSTAGRAM_GENERATOR_CONTENT } from "./tools/instagram-generator/tool-content";
+import {
+  ENGAGEMENT_FAQ_ITEMS,
+  ENGAGEMENT_EXAMPLE,
+} from "./tools/instagram-engagement-calculator/constants";
+import {
+  CHARACTER_COUNTER_FAQ_ITEMS,
+  CHARACTER_COUNTER_EXAMPLE,
+} from "./tools/instagram-character-counter/constants";
 
 /**
  * The tool catalog. To add tool #101, add one object here and drop its
@@ -300,6 +309,7 @@ export const TOOLS: ToolDefinition[] = [
     addedAt: "2026-08-01",
     applicationCategory: "MultimediaApplication",
     relatedToolsLimit: 9,
+    relatedGroup: "youtube",
     faq: YOUTUBE_GENERATOR_CONTENT["tag-generator"].faq,
     example: YOUTUBE_GENERATOR_CONTENT["tag-generator"].example,
   },
@@ -316,6 +326,7 @@ export const TOOLS: ToolDefinition[] = [
     addedAt: "2026-08-02",
     applicationCategory: "MultimediaApplication",
     relatedToolsLimit: 9,
+    relatedGroup: "youtube",
     faq: YOUTUBE_GENERATOR_CONTENT["title-generator"].faq,
     example: YOUTUBE_GENERATOR_CONTENT["title-generator"].example,
   },
@@ -332,6 +343,7 @@ export const TOOLS: ToolDefinition[] = [
     addedAt: "2026-08-03",
     applicationCategory: "MultimediaApplication",
     relatedToolsLimit: 9,
+    relatedGroup: "youtube",
     faq: YOUTUBE_GENERATOR_CONTENT["description-generator"].faq,
     example: YOUTUBE_GENERATOR_CONTENT["description-generator"].example,
   },
@@ -348,6 +360,7 @@ export const TOOLS: ToolDefinition[] = [
     addedAt: "2026-08-04",
     applicationCategory: "MultimediaApplication",
     relatedToolsLimit: 9,
+    relatedGroup: "youtube",
     faq: YOUTUBE_GENERATOR_CONTENT["hashtag-generator"].faq,
     example: YOUTUBE_GENERATOR_CONTENT["hashtag-generator"].example,
   },
@@ -364,6 +377,7 @@ export const TOOLS: ToolDefinition[] = [
     addedAt: "2026-08-05",
     applicationCategory: "MultimediaApplication",
     relatedToolsLimit: 9,
+    relatedGroup: "youtube",
     faq: YOUTUBE_GENERATOR_CONTENT["channel-name-generator"].faq,
     example: YOUTUBE_GENERATOR_CONTENT["channel-name-generator"].example,
   },
@@ -380,6 +394,7 @@ export const TOOLS: ToolDefinition[] = [
     addedAt: "2026-08-06",
     applicationCategory: "MultimediaApplication",
     relatedToolsLimit: 9,
+    relatedGroup: "youtube",
     faq: YOUTUBE_GENERATOR_CONTENT["video-idea-generator"].faq,
     example: YOUTUBE_GENERATOR_CONTENT["video-idea-generator"].example,
   },
@@ -396,6 +411,7 @@ export const TOOLS: ToolDefinition[] = [
     addedAt: "2026-08-07",
     applicationCategory: "MultimediaApplication",
     relatedToolsLimit: 9,
+    relatedGroup: "youtube",
     faq: YOUTUBE_GENERATOR_CONTENT["script-generator"].faq,
     example: YOUTUBE_GENERATOR_CONTENT["script-generator"].example,
   },
@@ -412,6 +428,7 @@ export const TOOLS: ToolDefinition[] = [
     addedAt: "2026-08-08",
     applicationCategory: "MultimediaApplication",
     relatedToolsLimit: 9,
+    relatedGroup: "youtube",
     faq: YOUTUBE_GENERATOR_CONTENT["keyword-generator"].faq,
     example: YOUTUBE_GENERATOR_CONTENT["keyword-generator"].example,
   },
@@ -428,6 +445,7 @@ export const TOOLS: ToolDefinition[] = [
     addedAt: "2026-08-09",
     applicationCategory: "MultimediaApplication",
     relatedToolsLimit: 9,
+    relatedGroup: "youtube",
     faq: TIMESTAMP_FAQ_ITEMS,
     example: TIMESTAMP_EXAMPLE,
   },
@@ -444,8 +462,179 @@ export const TOOLS: ToolDefinition[] = [
     addedAt: "2026-08-10",
     applicationCategory: "MultimediaApplication",
     relatedToolsLimit: 9,
+    relatedGroup: "youtube",
     faq: THUMBNAIL_FAQ_ITEMS,
     example: THUMBNAIL_EXAMPLE,
+  },
+  {
+    slug: "instagram-caption-generator",
+    name: "Instagram Caption Generator",
+    tagline: "Captions that sound like you, not an ad.",
+    description:
+      "Generate three engaging Instagram caption options from your post's topic — authentic, conversational, and ready to post.",
+    category: "creator-studio",
+    iconName: "MessageCircle",
+    keywords: ["instagram caption generator", "instagram captions", "caption ideas"],
+    status: "live",
+    addedAt: "2026-08-11",
+    applicationCategory: "MultimediaApplication",
+    relatedToolsLimit: 9,
+    relatedGroup: "instagram",
+    faq: INSTAGRAM_GENERATOR_CONTENT["caption-generator"].faq,
+    example: INSTAGRAM_GENERATOR_CONTENT["caption-generator"].example,
+  },
+  {
+    slug: "instagram-hashtag-generator",
+    name: "Instagram Hashtag Generator",
+    tagline: "The right mix, from broad reach to niche discovery.",
+    description:
+      "Generate three sets of relevant Instagram hashtags for your post, mixing broad and niche-specific tags for better reach.",
+    category: "creator-studio",
+    iconName: "Hash",
+    keywords: ["instagram hashtag generator", "instagram hashtags", "hashtags for instagram"],
+    status: "live",
+    addedAt: "2026-08-12",
+    applicationCategory: "MultimediaApplication",
+    relatedToolsLimit: 9,
+    relatedGroup: "instagram",
+    faq: INSTAGRAM_GENERATOR_CONTENT["hashtag-generator"].faq,
+    example: INSTAGRAM_GENERATOR_CONTENT["hashtag-generator"].example,
+  },
+  {
+    slug: "instagram-bio-generator",
+    name: "Instagram Bio Generator",
+    tagline: "150 characters, made to count.",
+    description:
+      "Generate three Instagram bio options from a short description of your account — clear, on-brand, and within the 150-character limit.",
+    category: "creator-studio",
+    iconName: "UserCircle",
+    keywords: ["instagram bio generator", "instagram bio ideas", "bio for instagram"],
+    status: "live",
+    addedAt: "2026-08-13",
+    applicationCategory: "MultimediaApplication",
+    relatedToolsLimit: 9,
+    relatedGroup: "instagram",
+    faq: INSTAGRAM_GENERATOR_CONTENT["bio-generator"].faq,
+    example: INSTAGRAM_GENERATOR_CONTENT["bio-generator"].example,
+  },
+  {
+    slug: "instagram-username-generator",
+    name: "Instagram Username Generator",
+    tagline: "A handle worth building a brand around.",
+    description:
+      "Generate three catchy, memorable Instagram username ideas from your name or niche.",
+    category: "creator-studio",
+    iconName: "AtSign",
+    keywords: ["instagram username generator", "instagram handle ideas", "username ideas"],
+    status: "live",
+    addedAt: "2026-08-14",
+    applicationCategory: "MultimediaApplication",
+    relatedToolsLimit: 9,
+    relatedGroup: "instagram",
+    faq: INSTAGRAM_GENERATOR_CONTENT["username-generator"].faq,
+    example: INSTAGRAM_GENERATOR_CONTENT["username-generator"].example,
+  },
+  {
+    slug: "instagram-reel-caption-generator",
+    name: "Instagram Reel Caption Generator",
+    tagline: "A hook fast enough for a fast format.",
+    description:
+      "Generate three short, punchy Instagram Reel captions from your video's topic, built for the quick pace of short-form video.",
+    category: "creator-studio",
+    iconName: "Film",
+    keywords: ["instagram reel caption generator", "reel captions", "reels caption ideas"],
+    status: "live",
+    addedAt: "2026-08-15",
+    applicationCategory: "MultimediaApplication",
+    relatedToolsLimit: 9,
+    relatedGroup: "instagram",
+    faq: INSTAGRAM_GENERATOR_CONTENT["reel-caption-generator"].faq,
+    example: INSTAGRAM_GENERATOR_CONTENT["reel-caption-generator"].example,
+  },
+  {
+    slug: "instagram-post-idea-generator",
+    name: "Instagram Post Idea Generator",
+    tagline: "Never stare at a blank content calendar again.",
+    description:
+      "Generate three specific, ready-to-shoot Instagram post ideas from your account's niche.",
+    category: "creator-studio",
+    iconName: "Lightbulb",
+    keywords: ["instagram post ideas", "content ideas generator", "instagram content calendar"],
+    status: "live",
+    addedAt: "2026-08-16",
+    applicationCategory: "MultimediaApplication",
+    relatedToolsLimit: 9,
+    relatedGroup: "instagram",
+    faq: INSTAGRAM_GENERATOR_CONTENT["post-idea-generator"].faq,
+    example: INSTAGRAM_GENERATOR_CONTENT["post-idea-generator"].example,
+  },
+  {
+    slug: "instagram-story-caption-generator",
+    name: "Instagram Story Caption Generator",
+    tagline: "Quick, casual, and gone in 24 hours.",
+    description:
+      "Generate three short, casual Instagram Story captions from what's happening in the moment.",
+    category: "creator-studio",
+    iconName: "Aperture",
+    keywords: ["instagram story caption generator", "story captions", "instagram stories ideas"],
+    status: "live",
+    addedAt: "2026-08-17",
+    applicationCategory: "MultimediaApplication",
+    relatedToolsLimit: 9,
+    relatedGroup: "instagram",
+    faq: INSTAGRAM_GENERATOR_CONTENT["story-caption-generator"].faq,
+    example: INSTAGRAM_GENERATOR_CONTENT["story-caption-generator"].example,
+  },
+  {
+    slug: "instagram-quote-generator",
+    name: "Instagram Quote Generator",
+    tagline: "Original, shareable, ready for a quote graphic.",
+    description:
+      "Generate three original, shareable quotes on any theme, ready to use on an Instagram quote graphic or caption.",
+    category: "creator-studio",
+    iconName: "Quote",
+    keywords: ["instagram quote generator", "quote graphics", "shareable quotes"],
+    status: "live",
+    addedAt: "2026-08-18",
+    applicationCategory: "MultimediaApplication",
+    relatedToolsLimit: 9,
+    relatedGroup: "instagram",
+    faq: INSTAGRAM_GENERATOR_CONTENT["quote-generator"].faq,
+    example: INSTAGRAM_GENERATOR_CONTENT["quote-generator"].example,
+  },
+  {
+    slug: "instagram-engagement-calculator",
+    name: "Instagram Engagement Calculator",
+    tagline: "Know your rate before you compare it to anyone else's.",
+    description:
+      "Calculate your Instagram engagement rate from followers, likes, comments, shares, and saves — with a plain-language rating.",
+    category: "creator-studio",
+    iconName: "TrendingUp",
+    keywords: ["instagram engagement calculator", "engagement rate calculator", "instagram engagement rate"],
+    status: "live",
+    addedAt: "2026-08-19",
+    applicationCategory: "MultimediaApplication",
+    relatedToolsLimit: 9,
+    relatedGroup: "instagram",
+    faq: ENGAGEMENT_FAQ_ITEMS,
+    example: ENGAGEMENT_EXAMPLE,
+  },
+  {
+    slug: "instagram-character-counter",
+    name: "Instagram Character Counter",
+    tagline: "Know exactly how much room you have left.",
+    description:
+      "Count characters, words, hashtags, and mentions for an Instagram caption, bio, or comment — with a heads-up before you hit the limit.",
+    category: "creator-studio",
+    iconName: "Ruler",
+    keywords: ["instagram character counter", "caption character count", "instagram bio character limit"],
+    status: "live",
+    addedAt: "2026-08-20",
+    applicationCategory: "MultimediaApplication",
+    relatedToolsLimit: 9,
+    relatedGroup: "instagram",
+    faq: CHARACTER_COUNTER_FAQ_ITEMS,
+    example: CHARACTER_COUNTER_EXAMPLE,
   },
 ];
 
@@ -475,24 +664,27 @@ export function getRecentlyAddedTools(limit = 6): ToolDefinition[] {
 }
 
 /**
- * Tools related to the given one: same category first, excluding itself,
- * capped at `limit`. Falls back to other live tools if the category is thin.
+ * Tools related to the given one: same group first, excluding itself,
+ * capped at `limit`. "Group" is `relatedGroup` if the tool sets one
+ * (letting two toolsets share a category but stay recommendation-scoped
+ * to their own siblings), otherwise it falls back to `category`. Falls
+ * back further to other live tools if the group is thin.
  */
 export function getRelatedTools(tool: ToolDefinition, limit = 3): ToolDefinition[] {
-  const sameCategory = TOOLS.filter(
-    (candidate) => candidate.category === tool.category && candidate.slug !== tool.slug
+  const group = tool.relatedGroup ?? tool.category;
+  const sameGroup = TOOLS.filter(
+    (candidate) => (candidate.relatedGroup ?? candidate.category) === group && candidate.slug !== tool.slug
   );
 
-  if (sameCategory.length >= limit) {
-    return sameCategory.slice(0, limit);
+  if (sameGroup.length >= limit) {
+    return sameGroup.slice(0, limit);
   }
 
   const fillers = TOOLS.filter(
-    (candidate) =>
-      candidate.slug !== tool.slug && !sameCategory.includes(candidate)
+    (candidate) => candidate.slug !== tool.slug && !sameGroup.includes(candidate)
   );
 
-  return [...sameCategory, ...fillers].slice(0, limit);
+  return [...sameGroup, ...fillers].slice(0, limit);
 }
 
 /** Simple case-insensitive search across name, tagline, description, and keywords. */

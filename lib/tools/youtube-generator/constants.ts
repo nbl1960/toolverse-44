@@ -1,23 +1,10 @@
+import type { GeneratorConfig } from "@/lib/generator-config";
 import type { YoutubeGeneratorType } from "./types";
 
 export const MIN_TOPIC_LENGTH = 3;
 export const MAX_TOPIC_LENGTH = 300;
 
-export interface YoutubeGeneratorConfig {
-  /** Label shown above the input field, e.g. "Video topic". */
-  inputLabel: string;
-  placeholder: string;
-  /** Short helper line under the input. */
-  helperText: string;
-  /** What one output unit is called, used in UI copy (e.g. "title", "script"). */
-  outputNoun: string;
-  /** Instruction sent to the model describing exactly what to produce. */
-  promptInstruction: string;
-  /** Guidance on the expected shape/format of each output string. */
-  formatHint: string;
-}
-
-export const YOUTUBE_GENERATOR_CONFIG: Record<YoutubeGeneratorType, YoutubeGeneratorConfig> = {
+export const YOUTUBE_GENERATOR_CONFIG: Record<YoutubeGeneratorType, GeneratorConfig> = {
   "tag-generator": {
     inputLabel: "Video topic or title",
     placeholder: "e.g. Beginner's guide to sourdough bread baking at home",

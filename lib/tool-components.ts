@@ -96,6 +96,46 @@ const TOOL_COMPONENT_LOADERS: Record<string, ComponentLoader> = {
     import("@/components/tools/youtube-thumbnail-downloader/youtube-thumbnail-downloader").then(
       (m) => ({ default: m.YoutubeThumbnailDownloader })
     ),
+  "instagram-caption-generator": () =>
+    import("@/components/tools/instagram-caption-generator/instagram-caption-generator").then((m) => ({
+      default: m.InstagramCaptionGenerator,
+    })),
+  "instagram-hashtag-generator": () =>
+    import("@/components/tools/instagram-hashtag-generator/instagram-hashtag-generator").then((m) => ({
+      default: m.InstagramHashtagGenerator,
+    })),
+  "instagram-bio-generator": () =>
+    import("@/components/tools/instagram-bio-generator/instagram-bio-generator").then((m) => ({
+      default: m.InstagramBioGenerator,
+    })),
+  "instagram-username-generator": () =>
+    import("@/components/tools/instagram-username-generator/instagram-username-generator").then(
+      (m) => ({ default: m.InstagramUsernameGenerator })
+    ),
+  "instagram-reel-caption-generator": () =>
+    import("@/components/tools/instagram-reel-caption-generator/instagram-reel-caption-generator").then(
+      (m) => ({ default: m.InstagramReelCaptionGenerator })
+    ),
+  "instagram-post-idea-generator": () =>
+    import("@/components/tools/instagram-post-idea-generator/instagram-post-idea-generator").then(
+      (m) => ({ default: m.InstagramPostIdeaGenerator })
+    ),
+  "instagram-story-caption-generator": () =>
+    import(
+      "@/components/tools/instagram-story-caption-generator/instagram-story-caption-generator"
+    ).then((m) => ({ default: m.InstagramStoryCaptionGenerator })),
+  "instagram-quote-generator": () =>
+    import("@/components/tools/instagram-quote-generator/instagram-quote-generator").then((m) => ({
+      default: m.InstagramQuoteGenerator,
+    })),
+  "instagram-engagement-calculator": () =>
+    import("@/components/tools/instagram-engagement-calculator/instagram-engagement-calculator").then(
+      (m) => ({ default: m.InstagramEngagementCalculator })
+    ),
+  "instagram-character-counter": () =>
+    import("@/components/tools/instagram-character-counter/instagram-character-counter").then(
+      (m) => ({ default: m.InstagramCharacterCounter })
+    ),
 };
 
 /** Returns the component loader for a tool's slug, or undefined if it has none yet. */

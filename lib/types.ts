@@ -53,6 +53,13 @@ export interface ToolDefinition {
    */
   relatedToolsLimit?: number;
   /**
+   * Overrides `category` for the purpose of picking related tools. Lets
+   * two toolsets share one category (e.g. YouTube and Instagram tools
+   * both under "Creator Studio") while each still recommends only its
+   * own siblings, not a mix of both.
+   */
+  relatedGroup?: string;
+  /**
    * schema.org `applicationCategory` value for this tool's structured
    * data, e.g. "FinanceApplication" for a calculator. Defaults to
    * "WebApplication" when omitted.

@@ -31,6 +31,12 @@ import {
   KeyRound,
   Timer,
   Youtube,
+  MessageCircle,
+  UserCircle,
+  Film,
+  Aperture,
+  Quote,
+  Ruler,
   type LucideIcon,
 } from "lucide-react";
 
@@ -76,6 +82,12 @@ export const ICON_MAP = {
   KeyRound,
   Timer,
   Youtube,
+  MessageCircle,
+  UserCircle,
+  Film,
+  Aperture,
+  Quote,
+  Ruler,
 } satisfies Record<string, LucideIcon>;
 
 /** The set of valid icon names a `ToolDefinition.iconName` or `Category.iconName` can use. */
