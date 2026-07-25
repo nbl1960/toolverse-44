@@ -136,6 +136,58 @@ const TOOL_COMPONENT_LOADERS: Record<string, ComponentLoader> = {
     import("@/components/tools/instagram-character-counter/instagram-character-counter").then(
       (m) => ({ default: m.InstagramCharacterCounter })
     ),
+  "linkedin-headline-generator": () =>
+    import("@/components/tools/linkedin-headline-generator/linkedin-headline-generator").then(
+      (m) => ({ default: m.LinkedinHeadlineGenerator })
+    ),
+  "linkedin-about-generator": () =>
+    import("@/components/tools/linkedin-about-generator/linkedin-about-generator").then((m) => ({
+      default: m.LinkedinAboutGenerator,
+    })),
+  "linkedin-summary-generator": () =>
+    import("@/components/tools/linkedin-summary-generator/linkedin-summary-generator").then((m) => ({
+      default: m.LinkedinSummaryGenerator,
+    })),
+  "linkedin-post-generator": () =>
+    import("@/components/tools/linkedin-post-generator/linkedin-post-generator").then((m) => ({
+      default: m.LinkedinPostGenerator,
+    })),
+  "linkedin-experience-generator": () =>
+    import("@/components/tools/linkedin-experience-generator/linkedin-experience-generator").then(
+      (m) => ({ default: m.LinkedinExperienceGenerator })
+    ),
+  "linkedin-skills-generator": () =>
+    import("@/components/tools/linkedin-skills-generator/linkedin-skills-generator").then((m) => ({
+      default: m.LinkedinSkillsGenerator,
+    })),
+  "linkedin-recommendation-generator": () =>
+    import(
+      "@/components/tools/linkedin-recommendation-generator/linkedin-recommendation-generator"
+    ).then((m) => ({ default: m.LinkedinRecommendationGenerator })),
+  "linkedin-connection-request-generator": () =>
+    import(
+      "@/components/tools/linkedin-connection-request-generator/linkedin-connection-request-generator"
+    ).then((m) => ({ default: m.LinkedinConnectionRequestGenerator })),
+  "linkedin-company-description-generator": () =>
+    import(
+      "@/components/tools/linkedin-company-description-generator/linkedin-company-description-generator"
+    ).then((m) => ({ default: m.LinkedinCompanyDescriptionGenerator })),
+  "linkedin-job-description-generator": () =>
+    import(
+      "@/components/tools/linkedin-job-description-generator/linkedin-job-description-generator"
+    ).then((m) => ({ default: m.LinkedinJobDescriptionGenerator })),
+  "linkedin-profile-optimizer": () =>
+    import("@/components/tools/linkedin-profile-optimizer/linkedin-profile-optimizer").then(
+      (m) => ({ default: m.LinkedinProfileOptimizer })
+    ),
+  "linkedin-headline-analyzer": () =>
+    import("@/components/tools/linkedin-headline-analyzer/linkedin-headline-analyzer").then(
+      (m) => ({ default: m.LinkedinHeadlineAnalyzer })
+    ),
+  "linkedin-profile-seo-checker": () =>
+    import("@/components/tools/linkedin-profile-seo-checker/linkedin-profile-seo-checker").then(
+      (m) => ({ default: m.LinkedinProfileSeoChecker })
+    ),
 };
 
 /** Returns the component loader for a tool's slug, or undefined if it has none yet. */

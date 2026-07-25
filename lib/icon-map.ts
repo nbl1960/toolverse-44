@@ -37,6 +37,18 @@ import {
   Aperture,
   Quote,
   Ruler,
+  PenTool,
+  Newspaper,
+  History,
+  Award,
+  ThumbsUp,
+  UserPlus,
+  Building2,
+  ClipboardList,
+  Wand2,
+  Gauge,
+  Search,
+  Briefcase,
   type LucideIcon,
 } from "lucide-react";
 
@@ -88,6 +100,18 @@ export const ICON_MAP = {
   Aperture,
   Quote,
   Ruler,
+  PenTool,
+  Newspaper,
+  History,
+  Award,
+  ThumbsUp,
+  UserPlus,
+  Building2,
+  ClipboardList,
+  Wand2,
+  Gauge,
+  Search,
+  Briefcase,
 } satisfies Record<string, LucideIcon>;
 
 /** The set of valid icon names a `ToolDefinition.iconName` or `Category.iconName` can use. */

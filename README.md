@@ -1,9 +1,10 @@
 # ToolVerse
 
 A scalable, production-ready platform for hosting many focused web tools
-under one roof. Ships today with **30 live tools** — AI Email Writer, a
-complete "Phase 1 Finance" suite of 9 calculators, and a 20-tool "Creator
-Studio" suite spanning YouTube and Instagram tools — and
+under one roof. Ships today with **43 live tools** — AI Email Writer, a
+complete "Phase 1 Finance" suite of 9 calculators, a 20-tool "Creator
+Studio" suite spanning YouTube and Instagram, and a 13-tool "LinkedIn
+Studio" suite — and
 an architecture designed to grow to 100+ tools without touching routing
 code.
 
@@ -145,6 +146,38 @@ Instagram tools share the `creator-studio` category (for browsing) but
 set `relatedGroup: "youtube"` / `relatedGroup: "instagram"` respectively,
 so each toolset's Related Tools rail recommends only its own nine
 siblings, not a mix of both.
+
+**Tools #31–43 — LinkedIn Studio**
+
+| Tool | Route | Kind |
+|---|---|---|
+| LinkedIn Headline Generator | `/tools/linkedin-headline-generator` | AI, 3 options |
+| LinkedIn About Generator | `/tools/linkedin-about-generator` | AI, 3 options |
+| LinkedIn Summary Generator | `/tools/linkedin-summary-generator` | AI, 3 options |
+| LinkedIn Post Generator | `/tools/linkedin-post-generator` | AI, 3 options |
+| LinkedIn Experience Generator | `/tools/linkedin-experience-generator` | AI, 3 options |
+| LinkedIn Skills Generator | `/tools/linkedin-skills-generator` | AI, 3 options |
+| LinkedIn Recommendation Generator | `/tools/linkedin-recommendation-generator` | AI, 3 options |
+| LinkedIn Connection Request Generator | `/tools/linkedin-connection-request-generator` | AI, 3 options |
+| LinkedIn Company Description Generator | `/tools/linkedin-company-description-generator` | AI, 3 options |
+| LinkedIn Job Description Generator | `/tools/linkedin-job-description-generator` | AI, 3 options |
+| LinkedIn Profile Optimizer | `/tools/linkedin-profile-optimizer` | AI — critique + rewrite, not 3 options |
+| LinkedIn Headline Analyzer | `/tools/linkedin-headline-analyzer` | Deterministic — transparent point-by-point scoring, no API call |
+| LinkedIn Profile SEO Checker | `/tools/linkedin-profile-seo-checker` | Deterministic — keyword coverage + completeness checks, no API call |
+
+The 10 LinkedIn AI generators reuse the exact same shared engine as
+YouTube's and Instagram's — the third platform on
+`components/shared/ai-generator-view.tsx` / `lib/generator-api.ts` /
+`lib/gemini.ts`, none of which needed any changes to support it. LinkedIn
+Studio is its own category (not folded into Creator Studio) since its
+audience — professionals and job seekers — is meaningfully different from
+YouTube/Instagram's content-creator audience. The Profile Optimizer,
+Headline Analyzer, and Profile SEO Checker are deliberately *not* part of
+the shared 3-options engine: the Optimizer returns a critique + rewrite
+(a different response shape), and the two analyzers are fully
+deterministic — no Gemini call, no API cost, instant results — with every
+point in their scores tied to one specific, visible, named check rather
+than a black-box number.
 
 **The shared finance layer this suite is built on**
 
@@ -367,7 +400,7 @@ CAGR), not seven.
 - Node.js **18.18+** (Node 20 LTS recommended)
 - npm 9+
 - A [Google Gemini API key](https://aistudio.google.com/apikey) (used by
-  the Email Writer tool and the Creator Studio YouTube and Instagram tools)
+  the Email Writer tool and every Creator Studio / LinkedIn Studio tool)
 
 ## 1. Install
 

@@ -58,6 +58,12 @@ export const CATEGORIES: Category[] = [
     description: "AI-powered tools for YouTube creators — titles, tags, scripts, and more.",
     iconName: "Video",
   },
+  {
+    slug: "linkedin-studio",
+    name: "LinkedIn Studio",
+    description: "AI-powered tools for LinkedIn — headlines, About sections, posts, and profile optimization.",
+    iconName: "Briefcase",
+  },
 ];
 
 export function getCategoryBySlug(slug: string): Category | undefined {
