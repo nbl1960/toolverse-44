@@ -1,8 +1,9 @@
 # ToolVerse
 
 A scalable, production-ready platform for hosting many focused web tools
-under one roof. Ships today with **10 live tools** — AI Email Writer plus a
-complete "Phase 1 Finance" suite of 9 calculators — and
+under one roof. Ships today with **20 live tools** — AI Email Writer, a
+complete "Phase 1 Finance" suite of 9 calculators, and a 10-tool "Creator
+Studio" suite for YouTube creators — and
 an architecture designed to grow to 100+ tools without touching routing
 code.
 
@@ -92,6 +93,32 @@ Calculate/Reset flow), summary cards, at least one chart, a period-by-period
 schedule table with CSV export, Share + Copy Results, a formula explanation,
 a worked example, an FAQ (with FAQPage JSON-LD), and a feedback widget — all
 via the shared components below, not reimplemented per tool.
+
+**Tools #11–20 — Creator Studio (YouTube tools)**
+
+| Tool | Route | Kind |
+|---|---|---|
+| YouTube Tag Generator | `/tools/youtube-tag-generator` | AI, 3 options |
+| YouTube Title Generator | `/tools/youtube-title-generator` | AI, 3 options |
+| YouTube Description Generator | `/tools/youtube-description-generator` | AI, 3 options |
+| YouTube Hashtag Generator | `/tools/youtube-hashtag-generator` | AI, 3 options |
+| YouTube Channel Name Generator | `/tools/youtube-channel-name-generator` | AI, 3 options |
+| YouTube Video Idea Generator | `/tools/youtube-video-idea-generator` | AI, 3 options |
+| YouTube Script Generator | `/tools/youtube-script-generator` | AI, 3 options |
+| YouTube Keyword Generator | `/tools/youtube-keyword-generator` | AI, 3 options |
+| YouTube Timestamp Generator | `/tools/youtube-timestamp-generator` | Deterministic — parses `Title \| duration` lines client-side, no API call |
+| YouTube Thumbnail Downloader | `/tools/youtube-thumbnail-downloader` | Deterministic — parses the video ID and links directly to YouTube's public thumbnail CDN, no API call |
+
+The 8 AI tools are **one shared implementation**, not eight: one API route
+(`app/api/tools/youtube-generator/generate/route.ts`), one hook
+(`hooks/tools/youtube-generator/use-youtube-generator.ts`), and one UI
+template (`components/tools/youtube-generator/youtube-generator-template.tsx`)
+parameterized by a `type`. Each tool's own component file is a five-line
+wrapper selecting its type — the prompt, input copy, and format hints for
+all 8 live in one config file
+(`lib/tools/youtube-generator/constants.ts`). Every Creator Studio tool
+sets `relatedToolsLimit: 9` on its registry entry, so its Related Tools
+rail shows all nine siblings instead of the platform default of three.
 
 **The shared finance layer this suite is built on**
 

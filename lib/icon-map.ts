@@ -21,6 +21,16 @@ import {
   Megaphone,
   BarChart3,
   Landmark,
+  Video,
+  Type,
+  AlignLeft,
+  Hash,
+  AtSign,
+  Lightbulb,
+  ScrollText,
+  KeyRound,
+  Timer,
+  Youtube,
   type LucideIcon,
 } from "lucide-react";
 
@@ -56,6 +66,16 @@ export const ICON_MAP = {
   Megaphone,
   BarChart3,
   Landmark,
+  Video,
+  Type,
+  AlignLeft,
+  Hash,
+  AtSign,
+  Lightbulb,
+  ScrollText,
+  KeyRound,
+  Timer,
+  Youtube,
 } satisfies Record<string, LucideIcon>;
 
 /** The set of valid icon names a `ToolDefinition.iconName` or `Category.iconName` can use. */

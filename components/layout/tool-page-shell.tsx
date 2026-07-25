@@ -62,7 +62,7 @@ export function ToolPageShell({ tool, children }: ToolPageShellProps) {
 
       {tool.status === "live" && <FeedbackSection toolName={tool.name} />}
 
-      <RelatedTools tool={tool} />
+      <RelatedTools tool={tool} limit={tool.relatedToolsLimit} />
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { downloadTextFile } from "./file-export";
+
 /**
  * Converts headers + rows into a well-formed CSV string, quoting any field
  * that contains a comma, quote, or newline.
@@ -20,13 +22,5 @@ export function arrayToCsv(headers: string[], rows: Array<Array<string | number>
 
 /** Triggers a browser download of the given CSV content as `filename`. */
 export function downloadCsv(filename: string, csvContent: string): void {
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  downloadTextFile(filename, csvContent, "text/csv;charset=utf-8;");
 }

@@ -52,6 +52,12 @@ export const CATEGORIES: Category[] = [
     description: "Calculators and tools for loans, budgeting, and money decisions.",
     iconName: "Landmark",
   },
+  {
+    slug: "creator-studio",
+    name: "Creator Studio",
+    description: "AI-powered tools for YouTube creators — titles, tags, scripts, and more.",
+    iconName: "Video",
+  },
 ];
 
 export function getCategoryBySlug(slug: string): Category | undefined {

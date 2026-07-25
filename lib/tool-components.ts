@@ -56,6 +56,46 @@ const TOOL_COMPONENT_LOADERS: Record<string, ComponentLoader> = {
     import("@/components/tools/cagr-calculator/cagr-calculator").then((m) => ({
       default: m.CagrCalculator,
     })),
+  "youtube-tag-generator": () =>
+    import("@/components/tools/youtube-tag-generator/youtube-tag-generator").then((m) => ({
+      default: m.YoutubeTagGenerator,
+    })),
+  "youtube-title-generator": () =>
+    import("@/components/tools/youtube-title-generator/youtube-title-generator").then((m) => ({
+      default: m.YoutubeTitleGenerator,
+    })),
+  "youtube-description-generator": () =>
+    import("@/components/tools/youtube-description-generator/youtube-description-generator").then(
+      (m) => ({ default: m.YoutubeDescriptionGenerator })
+    ),
+  "youtube-hashtag-generator": () =>
+    import("@/components/tools/youtube-hashtag-generator/youtube-hashtag-generator").then((m) => ({
+      default: m.YoutubeHashtagGenerator,
+    })),
+  "youtube-channel-name-generator": () =>
+    import("@/components/tools/youtube-channel-name-generator/youtube-channel-name-generator").then(
+      (m) => ({ default: m.YoutubeChannelNameGenerator })
+    ),
+  "youtube-video-idea-generator": () =>
+    import("@/components/tools/youtube-video-idea-generator/youtube-video-idea-generator").then(
+      (m) => ({ default: m.YoutubeVideoIdeaGenerator })
+    ),
+  "youtube-script-generator": () =>
+    import("@/components/tools/youtube-script-generator/youtube-script-generator").then((m) => ({
+      default: m.YoutubeScriptGenerator,
+    })),
+  "youtube-keyword-generator": () =>
+    import("@/components/tools/youtube-keyword-generator/youtube-keyword-generator").then((m) => ({
+      default: m.YoutubeKeywordGenerator,
+    })),
+  "youtube-timestamp-generator": () =>
+    import("@/components/tools/youtube-timestamp-generator/youtube-timestamp-generator").then(
+      (m) => ({ default: m.YoutubeTimestampGenerator })
+    ),
+  "youtube-thumbnail-downloader": () =>
+    import("@/components/tools/youtube-thumbnail-downloader/youtube-thumbnail-downloader").then(
+      (m) => ({ default: m.YoutubeThumbnailDownloader })
+    ),
 };
 
 /** Returns the component loader for a tool's slug, or undefined if it has none yet. */

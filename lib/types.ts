@@ -47,6 +47,12 @@ export interface ToolDefinition {
    */
   faq?: FaqItem[];
   /**
+   * Overrides the default related-tools count (3) shown on this tool's
+   * page. Useful for a tightly-scoped category where every tool genuinely
+   * wants to recommend all its siblings, not just a handful.
+   */
+  relatedToolsLimit?: number;
+  /**
    * schema.org `applicationCategory` value for this tool's structured
    * data, e.g. "FinanceApplication" for a calculator. Defaults to
    * "WebApplication" when omitted.
