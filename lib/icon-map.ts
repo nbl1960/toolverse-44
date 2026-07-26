@@ -69,6 +69,13 @@ import {
   Fingerprint,
   Code,
   FileCode,
+  QrCode,
+  Minimize2,
+  Maximize2,
+  FileImage,
+  Table,
+  Receipt,
+  Image,
   type LucideIcon,
 } from "lucide-react";
 
@@ -152,6 +159,13 @@ export const ICON_MAP = {
   Fingerprint,
   Code,
   FileCode,
+  QrCode,
+  Minimize2,
+  Maximize2,
+  FileImage,
+  Table,
+  Receipt,
+  Image,
 } satisfies Record<string, LucideIcon>;
 
 /** The set of valid icon names a `ToolDefinition.iconName` or `Category.iconName` can use. */

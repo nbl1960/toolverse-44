@@ -64,6 +64,12 @@ export const CATEGORIES: Category[] = [
     description: "AI-powered tools for LinkedIn — headlines, About sections, posts, and profile optimization.",
     iconName: "Briefcase",
   },
+  {
+    slug: "image-studio",
+    name: "Image Studio",
+    description: "Fast, private, browser-based image tools — compress, resize, and convert formats.",
+    iconName: "FileImage",
+  },
 ];
 
 export function getCategoryBySlug(slug: string): Category | undefined {

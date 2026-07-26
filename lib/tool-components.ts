@@ -348,6 +348,74 @@ const TOOL_COMPONENT_LOADERS: Record<string, ComponentLoader> = {
     import("@/components/tools/dev-javascript-minifier/dev-javascript-minifier").then((m) => ({
       default: m.DevJavascriptMinifier,
     })),
+  "resume-builder": () =>
+    import("@/components/tools/resume-builder/resume-builder").then((m) => ({
+      default: m.ResumeBuilder,
+    })),
+  "meeting-notes-summarizer": () =>
+    import("@/components/tools/meeting-notes-summarizer/meeting-notes-summarizer").then((m) => ({
+      default: m.MeetingNotesSummarizer,
+    })),
+  "regex-generator": () =>
+    import("@/components/tools/regex-generator/regex-generator").then((m) => ({
+      default: m.RegexGenerator,
+    })),
+  "color-palette-generator": () =>
+    import("@/components/tools/color-palette-generator/color-palette-generator").then((m) => ({
+      default: m.ColorPaletteGenerator,
+    })),
+  "seo-meta-generator": () =>
+    import("@/components/tools/seo-meta-generator/seo-meta-generator").then((m) => ({
+      default: m.SeoMetaGenerator,
+    })),
+  "csv-to-json": () =>
+    import("@/components/tools/csv-to-json/csv-to-json").then((m) => ({
+      default: m.CsvToJson,
+    })),
+  "qr-code-generator": () =>
+    import("@/components/tools/qr-code-generator/qr-code-generator").then((m) => ({
+      default: m.QrCodeGenerator,
+    })),
+  "image-compressor": () =>
+    import("@/components/tools/image-compressor/image-compressor").then((m) => ({
+      default: m.ImageCompressor,
+    })),
+  "image-resizer": () =>
+    import("@/components/tools/image-resizer/image-resizer").then((m) => ({
+      default: m.ImageResizer,
+    })),
+  "png-to-jpg-converter": () =>
+    import("@/components/tools/png-to-jpg-converter/png-to-jpg-converter").then((m) => ({
+      default: m.PngToJpgConverter,
+    })),
+  "jpg-to-png-converter": () =>
+    import("@/components/tools/jpg-to-png-converter/jpg-to-png-converter").then((m) => ({
+      default: m.JpgToPngConverter,
+    })),
+  "webp-converter": () =>
+    import("@/components/tools/webp-converter/webp-converter").then((m) => ({
+      default: m.WebpConverter,
+    })),
+  "jwt-decoder": () =>
+    import("@/components/tools/jwt-decoder/jwt-decoder").then((m) => ({
+      default: m.JwtDecoder,
+    })),
+  "url-encoder-decoder": () =>
+    import("@/components/tools/url-encoder-decoder/url-encoder-decoder").then((m) => ({
+      default: m.UrlEncoderDecoder,
+    })),
+  "seo-slug-generator": () =>
+    import("@/components/tools/seo-slug-generator/seo-slug-generator").then((m) => ({
+      default: m.SeoSlugGenerator,
+    })),
+  "json-to-csv-converter": () =>
+    import("@/components/tools/json-to-csv-converter/json-to-csv-converter").then((m) => ({
+      default: m.JsonToCsvConverter,
+    })),
+  "gst-calculator": () =>
+    import("@/components/tools/gst-calculator/gst-calculator").then((m) => ({
+      default: m.GstCalculator,
+    })),
 };
 
 /** Returns the component loader for a tool's slug, or undefined if it has none yet. */

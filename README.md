@@ -1,10 +1,12 @@
 # ToolVerse
 
 A scalable, production-ready platform for hosting many focused web tools
-under one roof. Ships today with **83 live tools** — AI Email Writer, a
-complete "Phase 1 Finance" suite of 9 calculators, a 40-tool "Creator
-Studio" suite spanning YouTube, Instagram, X (Twitter), and Facebook, a
-13-tool "LinkedIn Studio" suite, and 20 SEO/Developer utilities — and
+under one roof. **Version 1.0** ships **100 live tools, zero
+placeholders** — AI Email Writer, a complete "Phase 1 Finance" suite of
+10 calculators, a 40-tool "Creator Studio" suite spanning YouTube,
+Instagram, X (Twitter), and Facebook, a 13-tool "LinkedIn Studio" suite,
+20 SEO/Developer utilities, a 6-tool "Image Studio" suite, and 10 more
+across Writing, Productivity, Developer, Design, Marketing, and Data — and
 an architecture designed to grow to 100+ tools without touching routing
 code.
 
@@ -273,6 +275,30 @@ deliberately not offered in the Hash Generator — it isn't part of the
 Web Crypto API by design, and a hand-rolled implementation couldn't be
 verified against a trusted reference in this environment, so it was left
 out rather than shipped unverified.
+
+**Version 1.0 — the final 17 tools**
+
+Six formerly coming-soon tools are now fully live: AI Resume Builder and
+SEO Meta Tag Generator (a 6th platform on the shared AI-generator engine,
+`lib/tools/writing-generator/`), Meeting Notes Summarizer and Regex
+Generator (custom AI tools with structured, non-"3-option" output —
+Regex Generator's API route actually validates the returned pattern with
+`new RegExp()` before ever returning it), Color Palette Generator
+(deterministic HSL color-wheel math, not AI — verified against real
+color theory), and CSV to JSON Converter (a genuine RFC-4180-style
+parser, not a naive comma split).
+
+Eleven brand-new tools complete the 100: a new **Image Studio** category
+with 6 tools built on `lib/image-processing.ts` (real Canvas API
+decode/resize/re-encode, entirely client-side — nothing uploaded) and one
+shared `<ImageTransformTool>` component; QR Code Generator (via an
+established public QR API rather than a hand-rolled, unverifiable
+encoder); JWT Decoder (decodes only — never claims to verify a signature
+it has no key for); URL Encoder/Decoder; Slug Generator; JSON to CSV
+Converter (the reverse of CSV to JSON, reusing the same `arrayToCsv`
+helper the finance tools' schedule export already used); and GST
+Calculator (India's Goods and Services Tax, both directions, with a
+CGST/SGST split).
 
 **The shared finance layer this suite is built on**
 
