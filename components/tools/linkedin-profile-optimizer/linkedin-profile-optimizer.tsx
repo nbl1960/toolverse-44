@@ -109,7 +109,7 @@ export function LinkedinProfileOptimizer() {
           </div>
 
           <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wide text-brass">Why it's stronger</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-brass">Why it&apos;s stronger</p>
             <ul className="mt-3 flex flex-col gap-2">
               {result.suggestions.map((suggestion, index) => (
                 <li key={index} className="flex gap-2 text-sm leading-relaxed text-foreground">
