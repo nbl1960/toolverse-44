@@ -7,7 +7,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { JsonLd } from "@/components/shared/json-ld";
 import { buildOrganizationJsonLd, buildWebsiteJsonLd } from "@/lib/structured-data";
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/lib/site-config";
+import { SITE_NAME, SITE_BRAND_LINE, SITE_DESCRIPTION, SITE_URL } from "@/lib/site-config";
 import "./globals.css";
 
 const fontDisplay = Fraunces({
@@ -34,7 +34,7 @@ const fontMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — A Growing Catalog of Focused Web Tools`,
+    default: `${SITE_NAME} — ${SITE_BRAND_LINE}`,
     template: `%s · ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -52,12 +52,12 @@ export const metadata: Metadata = {
     type: "website",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — A Growing Catalog of Focused Web Tools`,
+    title: `${SITE_NAME} — ${SITE_BRAND_LINE}`,
     description: SITE_DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — A Growing Catalog of Focused Web Tools`,
+    title: `${SITE_NAME} — ${SITE_BRAND_LINE}`,
     description: SITE_DESCRIPTION,
   },
   robots: {

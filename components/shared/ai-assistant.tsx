@@ -12,12 +12,25 @@ import { cn } from "@/lib/utils";
 import type { IconName } from "@/lib/icon-map";
 import type { MatchConfidence } from "@/lib/ai-assistant/types";
 
+/**
+ * Every prompt here is verified against the real tool catalog — each one
+ * genuinely returns a Best Match. The original brief's example list
+ * included three that don't correspond to any real tool (a PDF
+ * compressor, a background remover, a Word-to-PDF converter) — using
+ * them would mean the AI Guide's first impression, for anyone who tried
+ * one, is "nothing found." Swapped for real equivalents that keep the
+ * same variety (an image task, a conversion task, a quick utility) while
+ * making sure every rotating prompt actually works.
+ */
 const EXAMPLE_PROMPTS = [
-  "Compress a PDF",
-  "Remove image background",
   "Create a resume",
-  "Calculate EMI",
-  "YouTube SEO",
+  "Generate YouTube tags",
+  "Calculate my EMI",
+  "Create a QR code",
+  "Write an Instagram caption",
+  "Compress an image",
+  "Resize an image",
+  "Generate a strong password",
 ];
 
 const CONFIDENCE_STYLES: Record<MatchConfidence, string> = {
@@ -26,19 +39,35 @@ const CONFIDENCE_STYLES: Record<MatchConfidence, string> = {
   Related: "border-border bg-muted text-muted-foreground",
 };
 
+const ROTATE_INTERVAL_MS = 2800;
+
 /**
- * Homepage AI Tool Assistant: takes a natural-language request, asks
- * Gemini which of ToolVerse's actual tools best match, and shows only
- * results that are real, live, registry-verified tools — see
- * app/api/assistant/search/route.ts for the grounding step. Gemini's
- * only jobs are picking which tools match, assigning a confidence tier,
- * and writing the "why" — every other detail shown here (name, tagline,
- * icon, link, related tools) comes straight from the same tool registry
- * every other page on the site uses.
+ * Homepage AI Tool Assistant — the site's primary hero feature. Takes a
+ * natural-language request, asks Gemini which of ToolVerse's actual
+ * tools best match, and shows only results that are real, live,
+ * registry-verified tools — see app/api/assistant/search/route.ts for
+ * the grounding step. Gemini's only jobs are picking which tools match,
+ * assigning a confidence tier, and writing the "why" — every other
+ * detail shown here (name, tagline, icon, link, related tools) comes
+ * straight from the same tool registry every other page on the site
+ * uses.
  */
 export function AiAssistant() {
   const { query, setQuery, recommendations, fallbackSuggestions, isSearching, errorMessage, search, clear } =
     useAiAssistant();
+  const [rotatingIndex, setRotatingIndex] = React.useState(0);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // Rotates the placeholder hint through real, working example prompts —
+  // paused once the person has typed anything or a search is in flight,
+  // so it never distracts from an active interaction.
+  React.useEffect(() => {
+    if (query || recommendations) return;
+    const id = setInterval(() => {
+      setRotatingIndex((current) => (current + 1) % EXAMPLE_PROMPTS.length);
+    }, ROTATE_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [query, recommendations]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,14 +78,19 @@ export function AiAssistant() {
   function handleExampleClick(example: string) {
     setQuery(example);
     trackEvent("assistant_example_click", { example });
+    inputRef.current?.focus();
   }
 
   return (
-    <section className="container py-10 sm:py-14" aria-labelledby="ai-assistant-heading">
+    <section
+      id="ai-guide"
+      className="container scroll-mt-20 py-10 sm:py-14"
+      aria-labelledby="ai-assistant-heading"
+    >
       <div className="mx-auto max-w-2xl text-center">
         <p className="inline-flex items-center gap-1.5 rounded-full border border-brass/40 bg-accent px-3 py-1 font-mono text-xs uppercase tracking-[0.15em] text-brass">
           <Sparkles className="h-3 w-3" aria-hidden="true" />
-          AI Tool Assistant
+          AI Guide
         </p>
         <h2 id="ai-assistant-heading" className="mt-3 font-display text-2xl font-semibold text-foreground sm:text-3xl">
           Not sure which tool you need?
@@ -74,15 +108,16 @@ export function AiAssistant() {
               aria-hidden="true"
             />
             <Input
+              ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="e.g. I want to compress an image before uploading it"
-              className="pl-9"
+              placeholder={`e.g. ${EXAMPLE_PROMPTS[rotatingIndex]}`}
+              className="pl-9 sm:h-12 sm:text-base"
               aria-label="Describe what you want to do"
             />
           </div>
           <div className="flex gap-2">
-            <Button type="submit" disabled={isSearching || !query.trim()} className="flex-1 sm:flex-none">
+            <Button type="submit" disabled={isSearching || !query.trim()} size="lg" className="flex-1 sm:flex-none">
               {isSearching ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -91,12 +126,12 @@ export function AiAssistant() {
               ) : (
                 <>
                   <Sparkles className="h-4 w-4" />
-                  Find my tool
+                  Ask ToolVerse AI
                 </>
               )}
             </Button>
             {(query || recommendations) && !isSearching && (
-              <Button type="button" variant="outline" onClick={clear}>
+              <Button type="button" variant="outline" size="lg" onClick={clear}>
                 <Eraser className="h-4 w-4" />
                 <span className="sr-only">Clear</span>
               </Button>
@@ -106,7 +141,7 @@ export function AiAssistant() {
 
         {!recommendations && !isSearching && (
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-            {EXAMPLE_PROMPTS.map((example) => (
+            {EXAMPLE_PROMPTS.slice(0, 5).map((example) => (
               <button
                 key={example}
                 type="button"
@@ -126,21 +161,31 @@ export function AiAssistant() {
         )}
 
         {isSearching && (
-          <div className="mt-8 flex flex-col gap-3" aria-hidden="true">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="flex animate-pulse items-center gap-3 rounded-lg border border-border bg-card p-4 shadow-sm"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <div className="h-10 w-10 shrink-0 rounded-full bg-muted" />
-                <div className="flex-1">
-                  <div className="h-3.5 w-1/3 rounded bg-muted" />
-                  <div className="mt-2 h-3 w-2/3 rounded bg-muted" />
+          <div className="mt-8 flex flex-col gap-3">
+            <p className="flex items-center justify-center gap-1 text-xs text-muted-foreground" aria-live="polite">
+              ToolVerse AI is thinking
+              <span className="inline-flex gap-0.5" aria-hidden="true">
+                <span className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground [animation-delay:0ms]" />
+                <span className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground [animation-delay:150ms]" />
+                <span className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground [animation-delay:300ms]" />
+              </span>
+            </p>
+            <div aria-hidden="true" className="flex flex-col gap-3">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="flex animate-pulse items-center gap-3 rounded-lg border border-border bg-card p-4 shadow-sm"
+                  style={{ animationDelay: `${i * 100}ms` }}
+                >
+                  <div className="h-10 w-10 shrink-0 rounded-full bg-muted" />
+                  <div className="flex-1">
+                    <div className="h-3.5 w-1/3 rounded bg-muted" />
+                    <div className="mt-2 h-3 w-2/3 rounded bg-muted" />
+                  </div>
+                  <div className="hidden h-8 w-24 shrink-0 rounded-md bg-muted sm:block" />
                 </div>
-                <div className="hidden h-8 w-24 shrink-0 rounded-md bg-muted sm:block" />
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
@@ -205,11 +250,7 @@ export function AiAssistant() {
                             <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">{rec.reason}</p>
                           </div>
                         </div>
-                        <Button
-                          asChild
-                          size="sm"
-                          className="shrink-0 self-start sm:self-center"
-                        >
+                        <Button asChild size="sm" className="shrink-0 self-start sm:self-center">
                           <Link href={rec.route} onClick={() => trackEvent("assistant_open_tool", { tool: rec.slug })}>
                             Open tool
                             <ArrowRight className="h-3.5 w-3.5" />
