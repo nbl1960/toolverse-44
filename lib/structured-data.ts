@@ -1,7 +1,13 @@
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "./site-config";
 import type { BreadcrumbItem, FaqItem, ToolDefinition } from "./types";
 
-/** schema.org WebSite entry, used once on the homepage. */
+/**
+ * schema.org WebSite entry, used once on the homepage. Includes a
+ * SearchAction so Google can offer a sitelinks search box directly in
+ * search results — this is only included because `/tools` genuinely
+ * supports a `?q=` query param that pre-fills and applies the search
+ * (see `ToolsBrowser`), not as a decorative claim the site doesn't back.
+ */
 export function buildWebsiteJsonLd() {
   return {
     "@context": "https://schema.org",
@@ -9,6 +15,47 @@ export function buildWebsiteJsonLd() {
     name: SITE_NAME,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE_URL}/tools?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+/** schema.org Organization entry, used once on the homepage alongside WebSite. */
+export function buildOrganizationJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon`,
+  };
+}
+
+/**
+ * schema.org WebApplication entry describing ToolVerse itself as a
+ * piece of software — distinct from the per-tool `SoftwareApplication`
+ * entries, which describe each individual tool.
+ */
+export function buildWebApplicationJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "Any",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
   };
 }
 

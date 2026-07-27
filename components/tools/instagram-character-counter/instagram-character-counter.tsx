@@ -79,7 +79,7 @@ export function InstagramCharacterCounter() {
         {result.exceedsFeedPreview && !result.isOverLimit && (
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            This caption will be cut off behind a "...more" link in the main feed after ~125 characters.
+            This caption will be cut off behind a &quot;...more&quot; link in the main feed after ~125 characters.
           </p>
         )}
 

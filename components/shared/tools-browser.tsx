@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,10 +23,19 @@ import { cn } from "@/lib/utils";
  * Importing the registry here — the same pattern already used for
  * `CATEGORIES` below — keeps this a plain client-side data read instead
  * of a boundary crossing.
+ *
+ * Also reads an initial `?q=` from the URL (if present) to seed the
+ * search field — this backs the WebSite JSON-LD's SearchAction with a
+ * URL that actually performs a search, rather than a schema claim the
+ * page doesn't honor. Purely additive: with no `?q=` param, behavior is
+ * unchanged from before.
  */
 export function ToolsBrowser() {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q") ?? "";
+
   const tools = React.useMemo(() => getAllTools(), []);
-  const [query, setQuery] = React.useState("");
+  const [query, setQuery] = React.useState(initialQuery);
   const [category, setCategory] = React.useState<string | null>(null);
 
   const filtered = React.useMemo(() => {

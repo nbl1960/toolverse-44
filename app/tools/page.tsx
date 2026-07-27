@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ToolsBrowser } from "@/components/shared/tools-browser";
 import { getAllTools } from "@/lib/tools-registry";
@@ -26,7 +27,9 @@ export default function AllToolsPage() {
         </p>
       </div>
       <div className="mt-8">
-        <ToolsBrowser />
+        <Suspense fallback={null}>
+          <ToolsBrowser />
+        </Suspense>
       </div>
     </div>
   );

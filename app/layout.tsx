@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { JsonLd } from "@/components/shared/json-ld";
-import { buildWebsiteJsonLd } from "@/lib/structured-data";
+import { buildOrganizationJsonLd, buildWebsiteJsonLd } from "@/lib/structured-data";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/lib/site-config";
 import "./globals.css";
 
@@ -89,6 +89,7 @@ export default function RootLayout({
         className={`${fontDisplay.variable} ${fontSans.variable} ${fontMono.variable} font-sans`}
       >
         <JsonLd data={buildWebsiteJsonLd()} />
+        <JsonLd data={buildOrganizationJsonLd()} />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex min-h-screen flex-col">
             <a

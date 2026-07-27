@@ -64,7 +64,7 @@ export function SeoKeywordDensityChecker() {
                 <div className="rounded-lg border border-brass/50 bg-accent p-5 text-center shadow-sm">
                   <p className="font-display text-2xl font-semibold text-foreground">{result.targetKeyword.density.toFixed(2)}%</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    "{result.targetKeyword.word}" — {result.targetKeyword.count} occurrence{result.targetKeyword.count === 1 ? "" : "s"}
+                    &quot;{result.targetKeyword.word}&quot; — {result.targetKeyword.count} occurrence{result.targetKeyword.count === 1 ? "" : "s"}
                   </p>
                 </div>
               )}

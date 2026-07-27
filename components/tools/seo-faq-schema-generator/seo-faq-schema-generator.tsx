@@ -40,7 +40,7 @@ export function SeoFaqSchemaGenerator() {
               className="mt-2 font-mono text-sm"
             />
             <p className="mt-1.5 text-xs text-muted-foreground">
-              One pair per block: a line starting with "Q:", a line starting with "A:", separated by a blank line between pairs.
+              One pair per block: a line starting with &quot;Q:&quot;, a line starting with &quot;A:&quot;, separated by a blank line between pairs.
             </p>
           </div>
           <Button type="button" variant="outline" onClick={reset}>

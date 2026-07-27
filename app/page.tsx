@@ -3,6 +3,8 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ToolCard } from "@/components/shared/tool-card";
 import { CategoryCard } from "@/components/shared/category-card";
+import { JsonLd } from "@/components/shared/json-ld";
+import { buildWebApplicationJsonLd } from "@/lib/structured-data";
 import { CATEGORIES } from "@/lib/categories";
 import { getAllTools, getLiveTools, getRecentlyAddedTools } from "@/lib/tools-registry";
 import { SITE_TAGLINE } from "@/lib/site-config";
@@ -14,6 +16,7 @@ export default function HomePage() {
 
   return (
     <>
+      <JsonLd data={buildWebApplicationJsonLd()} />
       {/* Hero */}
       <section className="container pb-8 pt-14 sm:pb-10 sm:pt-20">
         <div className="mx-auto max-w-2xl text-center">
