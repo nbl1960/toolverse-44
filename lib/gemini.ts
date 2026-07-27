@@ -35,14 +35,30 @@ interface GeminiResponseBody {
 
 export class GeminiRequestError extends Error {}
 
+export interface GeminiGenerationConfig {
+  /** Lower = more deterministic/faster to converge. Omitted entirely unless a caller opts in. */
+  temperature?: number;
+  /** Hard cap on response length — keeps latency bounded for callers that only need a short, structured answer. */
+  maxOutputTokens?: number;
+}
+
 /**
  * Sends a single-turn text prompt to Gemini and returns the model's text
  * response. Throws `GeminiRequestError` with a caller-friendly message on
  * any failure (network error, non-2xx response, safety block, or an
  * unexpected response shape) — callers can catch this and surface
  * `error.message` directly to the user.
+ *
+ * `generationConfig` is optional and additive: every existing caller
+ * that doesn't pass it gets byte-identical behavior to before. Callers
+ * with a tight latency budget (the AI Assistant) can opt into a lower
+ * temperature and a token cap to keep responses fast and consistent.
  */
-export async function generateGeminiText(prompt: string, apiKey: string): Promise<string> {
+export async function generateGeminiText(
+  prompt: string,
+  apiKey: string,
+  generationConfig?: GeminiGenerationConfig
+): Promise<string> {
   let response: Response;
   try {
     response = await fetch(GEMINI_ENDPOINT, {
@@ -53,6 +69,7 @@ export async function generateGeminiText(prompt: string, apiKey: string): Promis
       },
       body: JSON.stringify({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
+        ...(generationConfig ? { generationConfig } : {}),
       }),
     });
   } catch {

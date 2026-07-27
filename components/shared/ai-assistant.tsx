@@ -8,27 +8,37 @@ import { Input } from "@/components/ui/input";
 import { resolveIcon } from "@/lib/icon-map";
 import { useAiAssistant } from "@/hooks/use-ai-assistant";
 import { trackEvent } from "@/lib/analytics";
+import { cn } from "@/lib/utils";
 import type { IconName } from "@/lib/icon-map";
+import type { MatchConfidence } from "@/lib/ai-assistant/types";
 
 const EXAMPLE_PROMPTS = [
-  "I want to resize an image",
+  "Compress a PDF",
+  "Remove image background",
   "Create a resume",
-  "Download a YouTube thumbnail",
-  "Calculate my EMI",
-  "Write an Instagram caption",
+  "Calculate EMI",
+  "YouTube SEO",
 ];
+
+const CONFIDENCE_STYLES: Record<MatchConfidence, string> = {
+  "Best Match": "border-success/40 bg-success/10 text-success",
+  "Good Match": "border-brass/40 bg-accent text-brass",
+  Related: "border-border bg-muted text-muted-foreground",
+};
 
 /**
  * Homepage AI Tool Assistant: takes a natural-language request, asks
  * Gemini which of ToolVerse's actual tools best match, and shows only
  * results that are real, live, registry-verified tools — see
  * app/api/assistant/search/route.ts for the grounding step. Gemini's
- * only jobs are picking which tools match and writing the "why"; every
- * other detail shown here (name, tagline, icon, link) comes straight
- * from the same tool registry every other page on the site uses.
+ * only jobs are picking which tools match, assigning a confidence tier,
+ * and writing the "why" — every other detail shown here (name, tagline,
+ * icon, link, related tools) comes straight from the same tool registry
+ * every other page on the site uses.
  */
 export function AiAssistant() {
-  const { query, setQuery, recommendations, isSearching, errorMessage, search, clear } = useAiAssistant();
+  const { query, setQuery, recommendations, fallbackSuggestions, isSearching, errorMessage, search, clear } =
+    useAiAssistant();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -38,6 +48,7 @@ export function AiAssistant() {
 
   function handleExampleClick(example: string) {
     setQuery(example);
+    trackEvent("assistant_example_click", { example });
   }
 
   return (
@@ -84,8 +95,8 @@ export function AiAssistant() {
                 </>
               )}
             </Button>
-            {(query || recommendations) && (
-              <Button type="button" variant="outline" onClick={clear} disabled={isSearching}>
+            {(query || recommendations) && !isSearching && (
+              <Button type="button" variant="outline" onClick={clear}>
                 <Eraser className="h-4 w-4" />
                 <span className="sr-only">Clear</span>
               </Button>
@@ -114,14 +125,51 @@ export function AiAssistant() {
           </p>
         )}
 
-        {recommendations && (
+        {isSearching && (
+          <div className="mt-8 flex flex-col gap-3" aria-hidden="true">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="flex animate-pulse items-center gap-3 rounded-lg border border-border bg-card p-4 shadow-sm"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <div className="h-10 w-10 shrink-0 rounded-full bg-muted" />
+                <div className="flex-1">
+                  <div className="h-3.5 w-1/3 rounded bg-muted" />
+                  <div className="mt-2 h-3 w-2/3 rounded bg-muted" />
+                </div>
+                <div className="hidden h-8 w-24 shrink-0 rounded-md bg-muted sm:block" />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!isSearching && recommendations && (
           <div className="mt-8 animate-fade-up">
             {recommendations.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-border bg-card px-6 py-10 text-center">
+              <div className="rounded-lg border border-dashed border-border bg-card px-6 py-8 text-center">
                 <p className="text-sm text-muted-foreground">
                   Nothing in the catalog matches that yet — but new tools ship all the time.
                 </p>
-                <Button asChild variant="outline" className="mt-4">
+                {fallbackSuggestions && fallbackSuggestions.length > 0 && (
+                  <div className="mt-5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      You might find these useful
+                    </p>
+                    <div className="mt-3 flex flex-wrap justify-center gap-2">
+                      {fallbackSuggestions.map((tool) => (
+                        <Link
+                          key={tool.slug}
+                          href={tool.route}
+                          className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground transition-colors hover:border-brass/40"
+                        >
+                          {tool.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <Button asChild variant="outline" className="mt-5">
                   <Link href="/tools">
                     Browse all tools
                     <ArrowRight className="h-4 w-4" />
@@ -133,25 +181,58 @@ export function AiAssistant() {
                 {recommendations.map((rec) => {
                   const Icon = resolveIcon(rec.iconName as IconName);
                   return (
-                    <div
-                      key={rec.slug}
-                      className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
-                    >
-                      <div className="flex items-start gap-3">
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-brass/50 bg-primary text-primary-foreground">
-                          <Icon className="h-4.5 w-4.5" strokeWidth={2} aria-hidden="true" />
-                        </span>
-                        <div>
-                          <p className="font-display text-sm font-semibold text-foreground">{rec.name}</p>
-                          <p className="mt-0.5 text-xs text-muted-foreground">{rec.reason}</p>
+                    <div key={rec.slug} className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex items-start gap-3">
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-brass/50 bg-primary text-primary-foreground">
+                            <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
+                          </span>
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="font-display text-sm font-semibold text-foreground">{rec.name}</p>
+                              <span
+                                className={cn(
+                                  "rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide",
+                                  CONFIDENCE_STYLES[rec.confidence]
+                                )}
+                              >
+                                {rec.confidence}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-muted-foreground/80">
+                              Why this tool?
+                            </p>
+                            <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">{rec.reason}</p>
+                          </div>
                         </div>
+                        <Button
+                          asChild
+                          size="sm"
+                          className="shrink-0 self-start sm:self-center"
+                        >
+                          <Link href={rec.route} onClick={() => trackEvent("assistant_open_tool", { tool: rec.slug })}>
+                            Open tool
+                            <ArrowRight className="h-3.5 w-3.5" />
+                          </Link>
+                        </Button>
                       </div>
-                      <Button asChild size="sm" className="shrink-0 self-start sm:self-center">
-                        <Link href={rec.route} onClick={() => trackEvent("assistant_open_tool", { tool: rec.slug })}>
-                          Open tool
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </Link>
-                      </Button>
+
+                      {rec.relatedTools.length > 0 && (
+                        <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-border pt-3">
+                          <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground/70">
+                            Related:
+                          </span>
+                          {rec.relatedTools.map((related) => (
+                            <Link
+                              key={related.slug}
+                              href={related.route}
+                              className="rounded-full border border-border bg-background px-2.5 py-0.5 text-[11px] text-muted-foreground transition-colors hover:border-brass/40 hover:text-foreground"
+                            >
+                              {related.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   );
                 })}

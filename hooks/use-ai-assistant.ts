@@ -2,12 +2,17 @@
 
 import * as React from "react";
 import { toast } from "sonner";
-import type { AssistantRecommendation, AssistantSearchResponse } from "@/lib/ai-assistant/types";
+import type {
+  AssistantRecommendation,
+  AssistantRelatedTool,
+  AssistantSearchResponse,
+} from "@/lib/ai-assistant/types";
 
 interface UseAiAssistantResult {
   query: string;
   setQuery: (value: string) => void;
   recommendations: AssistantRecommendation[] | null;
+  fallbackSuggestions: AssistantRelatedTool[] | null;
   isSearching: boolean;
   errorMessage: string | null;
   search: () => Promise<void>;
@@ -18,6 +23,7 @@ interface UseAiAssistantResult {
 export function useAiAssistant(): UseAiAssistantResult {
   const [query, setQuery] = React.useState("");
   const [recommendations, setRecommendations] = React.useState<AssistantRecommendation[] | null>(null);
+  const [fallbackSuggestions, setFallbackSuggestions] = React.useState<AssistantRelatedTool[] | null>(null);
   const [isSearching, setIsSearching] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
@@ -45,6 +51,7 @@ export function useAiAssistant(): UseAiAssistantResult {
       }
 
       setRecommendations(data.recommendations);
+      setFallbackSuggestions(data.fallbackSuggestions ?? null);
     } catch {
       const message = "Couldn't reach the assistant. Check your connection and try again.";
       setErrorMessage(message);
@@ -57,8 +64,9 @@ export function useAiAssistant(): UseAiAssistantResult {
   const clear = React.useCallback(() => {
     setQuery("");
     setRecommendations(null);
+    setFallbackSuggestions(null);
     setErrorMessage(null);
   }, []);
 
-  return { query, setQuery, recommendations, isSearching, errorMessage, search, clear };
+  return { query, setQuery, recommendations, fallbackSuggestions, isSearching, errorMessage, search, clear };
 }
