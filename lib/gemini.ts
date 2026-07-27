@@ -40,6 +40,17 @@ export interface GeminiGenerationConfig {
   temperature?: number;
   /** Hard cap on response length — keeps latency bounded for callers that only need a short, structured answer. */
   maxOutputTokens?: number;
+  /**
+   * Set to "application/json" together with `responseSchema` to constrain
+   * Gemini's output at the token-sampling level — the response is
+   * guaranteed to be valid JSON matching the schema's shape, not just
+   * "asked nicely" via prompt instructions. This is what actually
+   * prevents malformed-JSON parse failures, rather than only cleaning
+   * up the string after the fact.
+   */
+  responseMimeType?: string;
+  /** OpenAPI-3.0-subset JSON schema (Gemini's REST wire format — plain lowercase `type` strings, not an SDK enum). */
+  responseSchema?: Record<string, unknown>;
 }
 
 /**

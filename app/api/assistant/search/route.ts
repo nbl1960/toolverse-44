@@ -22,6 +22,42 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const isRateLimited = createRateLimiter(20);
+const isDev = process.env.NODE_ENV === "development";
+
+/** Only logged in development — never in production, to avoid leaking user queries or model output into production logs. */
+function logDev(label: string, value: unknown) {
+  if (isDev) {
+    console.log(`[assistant/search] ${label}:`, value);
+  }
+}
+
+/**
+ * OpenAPI-3.0-subset schema, passed to Gemini as `responseSchema` — this
+ * is what actually prevents malformed JSON, by constraining the model's
+ * output at the token-sampling level rather than just asking nicely in
+ * the prompt. Combined with `responseMimeType: "application/json"` (set
+ * on the fetch call below), Gemini is guaranteed to return valid JSON
+ * matching this exact shape.
+ */
+const RESPONSE_SCHEMA = {
+  type: "object",
+  properties: {
+    recommendations: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          slug: { type: "string" },
+          reason: { type: "string" },
+          confidence: { type: "string", enum: MATCH_CONFIDENCE_VALUES },
+        },
+        required: ["slug", "reason", "confidence"],
+        propertyOrdering: ["slug", "reason", "confidence"],
+      },
+    },
+  },
+  required: ["recommendations"],
+};
 
 function buildPrompt(query: string, catalog: string): string {
   return `You are the ToolVerse Tool Assistant. A user describes, in their own words, what they're trying to do. Find the tools from the catalog below that genuinely help — matching on the underlying task and intent, not just literal keyword overlap. For example: "shrink a photo before uploading" should match an image compressor even without the word "shrink" in its listing; "turn text into a QR code" should match a QR generator; "check if my headline is good" should match a headline analyzer or scorer.
@@ -38,34 +74,97 @@ Task:
 
 Rules:
 - ONLY use slugs copied exactly from the catalog above. Never invent a slug, a tool, or a variation of a slug that isn't listed verbatim.
-- If nothing in the catalog is a good match for the request, return fewer results — even an empty list — rather than forcing a weak or unrelated match. Do not pad the list to reach 5.
-- Be honest about confidence: don't call something a "Best Match" just to have one — if the closest thing is only "Related", say so.
-- Respond with ONLY a raw JSON object, no markdown code fences, no commentary, in exactly this shape:
-{"recommendations": [{"slug": "...", "reason": "...", "confidence": "Best Match"}]}`;
+- If nothing in the catalog is a good match for the request, return an empty "recommendations" array rather than forcing a weak or unrelated match. Do not pad the list to reach 5.
+- Be honest about confidence: don't call something a "Best Match" just to have one — if the closest thing is only "Related", say so.`;
 }
 
-function isValidConfidence(value: unknown): value is MatchConfidence {
-  return typeof value === "string" && (MATCH_CONFIDENCE_VALUES as string[]).includes(value);
-}
+/** Thrown when a Gemini response can't be turned into a usable recommendation list at all — distinct from individual items being dropped, which is normal and expected. */
+class UnparseableAssistantResponse extends Error {}
 
+/**
+ * Parses and validates a raw Gemini response into the raw match list.
+ * Two distinct failure modes are handled differently:
+ *  - JSON.parse() itself throwing (malformed JSON) → caught explicitly,
+ *    re-thrown as UnparseableAssistantResponse so the caller can retry.
+ *  - Valid JSON but missing/wrong-shaped "recommendations" → also
+ *    treated as unparseable and eligible for retry.
+ *  - Individual array items with the wrong shape → filtered out
+ *    silently; this is NOT a retry-triggering failure, since a partially
+ *    good response is still useful.
+ */
 function parseRawMatches(raw: string): RawAssistantMatch[] {
-  const cleaned = raw.trim().replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+  const cleaned = raw
+    .trim()
+    .replace(/^```(?:json)?/i, "")
+    .replace(/```$/i, "")
+    .trim();
+
   const jsonStart = cleaned.indexOf("{");
   const jsonEnd = cleaned.lastIndexOf("}");
   if (jsonStart === -1 || jsonEnd === -1 || jsonEnd < jsonStart) {
-    throw new Error("Model response did not contain a parseable JSON object.");
+    throw new UnparseableAssistantResponse("Response did not contain a JSON object.");
   }
-  const parsed = JSON.parse(cleaned.slice(jsonStart, jsonEnd + 1)) as { recommendations?: unknown };
-  if (!Array.isArray(parsed.recommendations)) {
-    return [];
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(cleaned.slice(jsonStart, jsonEnd + 1));
+  } catch (parseError) {
+    // The exact failure the user reported ("Expected ',' or ']' after
+    // array element...") lands here — caught explicitly rather than
+    // left to crash the request.
+    throw new UnparseableAssistantResponse(
+      parseError instanceof Error ? parseError.message : "Malformed JSON."
+    );
   }
-  return parsed.recommendations.filter(
+
+  const recommendations = (parsed as { recommendations?: unknown }).recommendations;
+  if (!Array.isArray(recommendations)) {
+    throw new UnparseableAssistantResponse("Response was valid JSON but missing a 'recommendations' array.");
+  }
+
+  return recommendations.filter(
     (item): item is RawAssistantMatch =>
       typeof item === "object" &&
       item !== null &&
       typeof (item as RawAssistantMatch).slug === "string" &&
       typeof (item as RawAssistantMatch).reason === "string"
   );
+}
+
+/**
+ * Calls Gemini and parses the result, retrying once if the response
+ * can't be parsed at all (malformed JSON or the wrong top-level shape).
+ * A second consecutive failure gives up and lets the caller show a
+ * friendly message — this never throws the raw parse error up to the
+ * user.
+ */
+async function fetchRecommendationsWithRetry(prompt: string, apiKey: string): Promise<RawAssistantMatch[]> {
+  const generationConfig = {
+    temperature: 0.2,
+    maxOutputTokens: 1024,
+    responseMimeType: "application/json",
+    responseSchema: RESPONSE_SCHEMA,
+  };
+
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    const rawText = await generateGeminiText(prompt, apiKey, generationConfig);
+    try {
+      return parseRawMatches(rawText);
+    } catch (error) {
+      logDev(`attempt ${attempt} failed to parse`, { error: String(error), rawText });
+      if (attempt === 2) {
+        throw new UnparseableAssistantResponse("The AI Guide's response couldn't be understood after two attempts.");
+      }
+      // First failure: fall through and retry once.
+    }
+  }
+
+  // Unreachable, but keeps TypeScript's control-flow analysis happy.
+  throw new UnparseableAssistantResponse("Unexpected retry loop exit.");
+}
+
+function isValidConfidence(value: unknown): value is MatchConfidence {
+  return typeof value === "string" && (MATCH_CONFIDENCE_VALUES as string[]).includes(value);
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse<AssistantSearchResponse>> {
@@ -109,12 +208,25 @@ export async function POST(request: NextRequest): Promise<NextResponse<Assistant
 
     const catalog = buildToolCatalogText();
     const prompt = buildPrompt(query.trim(), catalog);
-    // Tuned for this specific call: low temperature for consistent,
-    // fast-converging structured output, and a token cap since the
-    // response is always short (5 slugs + brief reasons) — both help
-    // keep this under the 2-second target latency.
-    const rawText = await generateGeminiText(prompt, apiKey, { temperature: 0.2, maxOutputTokens: 700 });
-    const rawMatches = parseRawMatches(rawText);
+
+    let rawMatches: RawAssistantMatch[];
+    try {
+      rawMatches = await fetchRecommendationsWithRetry(prompt, apiKey);
+    } catch (error) {
+      if (error instanceof UnparseableAssistantResponse) {
+        // The friendly message the user asked for — never the raw
+        // "Expected ',' or ']'..." parser error.
+        console.error("[/api/assistant/search] Gemini response unparseable after retry:", error.message);
+        return NextResponse.json(
+          {
+            success: false,
+            error: "The AI Guide is having trouble right now. Please try rephrasing your request or try again in a moment.",
+          },
+          { status: 502 }
+        );
+      }
+      throw error;
+    }
 
     // The critical grounding step: Gemini's job was only to pick slugs,
     // write reasons, and assign a confidence tier. Every other field
@@ -124,8 +236,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<Assistant
     // doesn't actually exist (a hallucination) is silently dropped here,
     // not surfaced as an error — the user just sees fewer, all-real
     // results. An invalid/missing confidence value is never trusted
-    // either — it falls back to the lowest-confidence label rather than
-    // letting the model claim "Best Match" with a malformed response.
+    // either — it falls back to the lowest-confidence label. (The
+    // schema's enum already constrains this at generation time, but
+    // this check stays as defense-in-depth rather than assuming the
+    // schema constraint can never be bypassed.)
     const seen = new Set<string>();
     const recommendations = rawMatches
       .map((match) => {
@@ -158,6 +272,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<Assistant
   } catch (error) {
     console.error("[/api/assistant/search] Search failed:", error);
     const message = error instanceof Error ? error.message : "Something went wrong.";
-    return NextResponse.json({ success: false, error: `Couldn't search right now: ${message}` }, { status: 502 });
+    return NextResponse.json(
+      { success: false, error: `Couldn't search right now: ${message}` },
+      { status: 502 }
+    );
   }
 }
