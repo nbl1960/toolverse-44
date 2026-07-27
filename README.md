@@ -531,6 +531,19 @@ npm install
 
 ## 2. Configure environment variables
 
+`GEMINI_API_KEY` is read only on the server, inside `lib/gemini.ts` (the
+shared helper every AI tool calls) — never exposed to the browser. Which
+file it comes from depends on which of these three you're running, and
+they don't overlap:
+
+| Command | Runtime | Reads the key from |
+|---|---|---|
+| `npm run dev` | Plain Next.js dev server | `.env.local` |
+| `npm run preview` | Local Cloudflare Workers simulation (via Wrangler) | `.dev.vars` |
+| `npm run deploy` (production) | Actual Cloudflare Workers | A Worker secret (`wrangler secret put`) |
+
+**For `npm run dev` (what you'll use day-to-day):**
+
 ```bash
 cp .env.example .env.local
 ```
@@ -538,13 +551,42 @@ cp .env.example .env.local
 ```env
 # .env.local
 GEMINI_API_KEY=your-gemini-api-key-here
-
-# Optional — used for SEO metadata (Open Graph URLs, sitemap, robots.txt)
-NEXT_PUBLIC_SITE_URL=https://your-domain.com
+NEXT_PUBLIC_SITE_URL=https://your-domain.com   # optional — used in SEO metadata
 ```
 
-`GEMINI_API_KEY` is read only on the server, inside `lib/gemini.ts` (the
-shared helper both AI tools call) — never exposed to the browser.
+This is plain Next.js behavior (`.env.local` is a Next.js convention,
+nothing Cloudflare-specific) — the dev server reads it automatically,
+no extra setup.
+
+**For `npm run preview` (testing in the actual Workers runtime locally):**
+
+```bash
+cp .dev.vars.example .dev.vars
+```
+
+```env
+# .dev.vars
+GEMINI_API_KEY=your-gemini-api-key-here
+```
+
+`.dev.vars` is Wrangler's own convention for local secret simulation —
+`.env.local` is **not** read when running through Wrangler, which is why
+this is a separate file with separate setup. Both `.env.local` and
+`.dev.vars` are gitignored; neither should ever be committed.
+
+**For production, see "Deploying to Cloudflare Workers" below** —
+production never reads either file; it uses an actual encrypted Worker
+secret instead.
+
+Why this works consistently across all three: every AI route declares
+`export const runtime = "nodejs";`, and `wrangler.jsonc` sets the
+`nodejs_compat` compatibility flag — together these are what make
+`process.env.GEMINI_API_KEY` resolve correctly under the Workers
+runtime, the same way it does under plain Node.js. Without
+`nodejs_compat`, secrets are only reachable via the `env` parameter
+passed to a Worker's fetch handler, not `process.env` — Next.js API
+routes have no access to that parameter directly, so this flag is load-
+bearing, not optional.
 
 ## 3. Run the dev server
 
@@ -585,6 +627,14 @@ npx wrangler login
 npx wrangler secret put GEMINI_API_KEY
 npm run deploy
 ```
+
+`wrangler secret put` stores the key encrypted on Cloudflare's side —
+it's set once and persists across every future deploy; it is never read
+from `.env.local` or `.dev.vars` (see "Configure environment variables"
+above for what each of those two is actually for). Before deploying for
+the first time, `npm run preview` (with a `.dev.vars` file in place) is
+worth running to confirm the app behaves correctly under the real
+Workers runtime, not just Next.js's own dev server.
 
 `npm run deploy` runs `opennextjs-cloudflare build` then
 `opennextjs-cloudflare deploy` — see `package.json` for the exact scripts,
