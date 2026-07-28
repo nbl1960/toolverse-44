@@ -51,6 +51,18 @@ const nextConfig = {
           { key: "X-XSS-Protection", value: "1; mode=block" },
         ],
       },
+      {
+        // Every file under /_next/static/ has a content hash baked into
+        // its filename (Next.js's own build output convention) — the
+        // filename itself changes whenever the content does, so it's
+        // safe to tell browsers to cache it forever and skip
+        // revalidation entirely on repeat visits, rather than the
+        // shorter default cache window. This measurably helps repeat-
+        // visit LCP/load time without risking stale content, since a
+        // changed file is a different URL by construction.
+        source: "/_next/static/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
     ];
   },
 };
