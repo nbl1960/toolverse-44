@@ -41,6 +41,16 @@ export interface ToolDefinition {
    */
   addedAt: string;
   /**
+   * Optional 150-250 word SEO landing-page copy, unique per tool —
+   * covers what the tool does, its benefits, how to use it, who it's
+   * for, and best use cases. Rendered by `ToolPageShell` between the
+   * tool UI and the FAQ, under an "About {tool}" H2. Optional and
+   * rolled out tool-by-tool rather than templated, since generic
+   * boilerplate repeated across 100 pages would read as exactly the
+   * kind of thin content this field exists to avoid.
+   */
+  introParagraph?: string;
+  /**
    * Optional FAQ entries. When present, `ToolPageShell` renders them via
    * the shared `<Faq>` component and the tool page emits FAQPage JSON-LD —
    * no per-tool FAQ markup needed.

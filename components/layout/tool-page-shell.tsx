@@ -97,6 +97,15 @@ export function ToolPageShell({ tool, children }: ToolPageShellProps) {
         {tool.status === "live" ? children : <ComingSoonPanel tool={tool} />}
       </section>
 
+      {tool.introParagraph && (
+        <section className="mt-10 max-w-3xl">
+          <h2 className="font-display text-lg font-semibold text-foreground">About {tool.name}</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {tool.introParagraph}
+          </p>
+        </section>
+      )}
+
       {tool.formula && <FormulaSection formula={tool.formula} />}
 
       {tool.example && <ExampleCalculation example={tool.example} />}

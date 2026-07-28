@@ -483,33 +483,45 @@ CAGR), not seven.
    `calculations.ts` should just adapt the shared engine's result, the way
    every finance tool in this repo does.
 3. If it needs a backend, add `app/api/tools/<slug>/.../route.ts`.
-4. Register it in `lib/tools-registry.ts`. `addedAt` is required — every
-   tool needs one so `getRecentlyAddedTools()` can sort correctly:
+4. Register its component loader in `lib/tool-components.ts`:
+   ```ts
+   "your-tool": () =>
+     import("@/components/tools/your-tool/your-tool").then((m) => ({
+       default: m.YourTool,
+     })),
+   ```
+5. Register the tool itself in `lib/tools-registry.ts`. `addedAt` is
+   required — every tool needs one so `getRecentlyAddedTools()` can sort
+   correctly. `iconName` is a string key into `lib/icon-map.ts`'s
+   `ICON_MAP` (add the icon there first if it isn't already imported) —
+   not a component reference, since `ToolDefinition` has to stay
+   serializable across the Server→Client boundary:
    ```ts
    {
      slug: "your-tool",
      name: "Your Tool",
      tagline: "...",
-     description: "...",
+     description: "...", // under 155 chars — this becomes the meta description
      category: "developer", // must match a slug in lib/categories.ts
-     icon: SomeLucideIcon,
+     iconName: "Wrench", // must exist in lib/icon-map.ts's ICON_MAP
      keywords: ["..."],
      status: "live",
      addedAt: "2026-08-01", // ISO date — required, drives "Recently added"
-     loadComponent: () =>
-       import("@/components/tools/your-tool/your-tool").then((m) => ({
-         default: m.YourTool,
-       })),
      // All optional. Add any of these and ToolPageShell renders the
      // matching section automatically — no new component code needed:
-     // faq: YourToolFaqItems,
+     // introParagraph: "150-250 words covering what it does, benefits,
+     //   how to use it, who it's for, and best use cases — unique prose,
+     //   not templated filler. Rendered under an "About {tool}" H2.
+     //   This is genuinely load-bearing for SEO: a tool page with only a
+     //   one-line tagline reads as thin content to search engines.
+     // faq: YourToolFaqItems, // 4 items, also emits FAQPage JSON-LD
      // formula: YourToolFormula,
      // example: YourToolExample,
      // applicationCategory: "FinanceApplication",
      // isCalculator: true, // adds the Calculator JSON-LD subcategory
    }
    ```
-5. Done. It now has a page at `/tools/your-tool`, shows up on the
+6. Done. It now has a page at `/tools/your-tool`, shows up on the
    homepage's category grid and "Recently added" rail, `/tools`,
    its category page, related-tools rails, search, the sitemap, and gets
    its own OG image — automatically.

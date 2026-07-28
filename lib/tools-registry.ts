@@ -1,4 +1,5 @@
 import type { ToolDefinition } from "./types";
+import { EMAIL_WRITER_FAQ_ITEMS } from "./tools/email-writer/constants";
 import { EMI_FAQ_ITEMS, EMI_FORMULA, EMI_EXAMPLE } from "./tools/emi-calculator/constants";
 import { SIP_FAQ_ITEMS, SIP_FORMULA, SIP_EXAMPLE } from "./tools/sip-calculator/constants";
 import { LOAN_FAQ_ITEMS, LOAN_FORMULA, LOAN_EXAMPLE } from "./tools/loan-calculator/constants";
@@ -105,11 +106,14 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Write the email. We'll find the words.",
     description:
       "Describe what you need to say, choose a tone and a length, and get a ready-to-send subject line and body in seconds.",
+    introParagraph:
+      "Staring at a blank subject line is its own kind of writer's block, and it's usually the emails that matter most — a follow-up after an interview, a tricky message to a client, a cover letter you've rewritten four times — that stall the longest. The AI Email Writer takes a rough description of what you need to say, a tone (formal, friendly, direct), and a target length, and turns it into a complete subject line and body you can send as-is or use as a strong first draft. It's built for the moment you know what you want to communicate but not how to phrase it: a status update that needs to sound confident without overselling, a decline that needs to stay warm, a pitch that needs one clean paragraph instead of five rambling ones. Freelancers, job seekers, and anyone who sends more email than they'd like all use it the same way — describe the situation, generate, adjust the specifics, send. It won't know details you haven't given it, so the more context in your prompt, the better the draft; treat the output as a strong starting point tailored to your voice, not a template to copy blindly.",
     category: "writing",
     iconName: "Mail",
     keywords: ["email", "writer", "generator", "ai", "professional email", "cover letter"],
     status: "live",
     addedAt: "2026-06-01",
+    faq: EMAIL_WRITER_FAQ_ITEMS,
   },
   {
     slug: "resume-builder",
@@ -117,6 +121,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "A sharper resume in one pass.",
     description:
       "Turn a rough work history into a clean, recruiter-ready resume, tailored to the role you're applying for.",
+    introParagraph:
+      "A resume rarely fails because the person's experience wasn't good enough — it fails because the experience never got translated into the specific, quantified language that actually gets read. The AI Resume Builder takes a rough description of your background and your target role and turns it into a structured draft: a short professional summary, action-oriented experience bullets, and a relevant skills line, all shaped around what a recruiter or hiring manager for that specific role would actually want to see. It's genuinely useful for two different moments — writing a first resume from scratch when you don't know where to start, and reworking an existing one for a career change, where your past titles don't obviously map to where you're headed next. It works only from what you actually tell it, so the single biggest thing you can do to improve the output is include real numbers: team size, percentage growth, budget managed, anything concrete. Treat the result as a strong structural draft to personalize, not a finished document — the specific project names, exact dates, and small details that make a resume feel authentic still need to come from you.",
     category: "writing",
     iconName: "FileText",
     keywords: ["resume", "cv", "job application", "career"],
@@ -162,6 +168,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "A palette that actually goes together.",
     description:
       "Generate harmonious color palettes from a base color using real HSL color-wheel relationships — complementary, analogous, triadic, or monochromatic.",
+    introParagraph:
+      "Picking a second and third color that actually work with a starting color is a real skill, and most people either default to safe neutrals or end up with a palette that clashes in ways they can't quite articulate why. The Color Palette Generator solves this with actual color theory rather than guesswork: enter a base color and choose a scheme — complementary, analogous, triadic, or monochromatic — and it calculates five colors using real HSL color-wheel relationships, the same math a trained designer would apply by hand. It's built for anyone making a design decision without a design background: a founder picking brand colors, a developer choosing a UI accent palette, a student putting together a presentation that needs to look intentional rather than default. Complementary schemes give the highest contrast and work well for a single accent color against a neutral background; analogous schemes read as calmer and more cohesive, which tends to suit a full palette better than a single bold pairing.",
     category: "design",
     iconName: "Palette",
     keywords: ["colors", "palette", "design", "branding", "ui"],
@@ -207,6 +215,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Know your monthly payment before you sign.",
     description:
       "Calculate your monthly loan installment (EMI), total interest, and full amortization schedule from your loan amount, interest rate, and tenure.",
+    introParagraph:
+      "Loan offers are usually presented as a single monthly number, which makes it hard to see how much of that number is actually interest versus principal, or how a slightly different tenure changes the total cost over the life of the loan. The EMI Calculator takes a loan amount, interest rate, and tenure and breaks the equated monthly installment down clearly, alongside the total interest you'll pay and a full amortization view of how the balance shrinks over time. It's built for anyone comparing loan offers before signing — a home loan, a car loan, a personal loan — where a half-percent rate difference or a two-year tenure change can mean a meaningfully different total cost that a single EMI figure doesn't make obvious. The most useful way to use it isn't checking one loan in isolation; it's running the same amount through two or three rate/tenure combinations side by side, since that comparison is usually where the real decision lives, not in any single number alone.",
     category: "finance",
     iconName: "Calculator",
     keywords: [
@@ -231,7 +241,7 @@ export const TOOLS: ToolDefinition[] = [
     name: "SIP Calculator",
     tagline: "See what consistent investing actually adds up to.",
     description:
-      "Project your SIP's final corpus, total returns, and CAGR from a monthly investment, expected return rate, and investment period — with optional annual step-up and inflation adjustment.",
+      "Project your SIP's final corpus, total returns, and CAGR from a monthly investment, return rate, and period — with step-up and inflation options.",
     category: "finance",
     iconName: "TrendingUp",
     keywords: [
@@ -377,6 +387,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Tags that actually help people find your video.",
     description:
       "Generate three ready-to-use sets of YouTube tags from your video's topic, mixing broad and long-tail keywords for better discoverability.",
+    introParagraph:
+      "YouTube's search and recommendation system leans heavily on the tags attached to a video, and getting them right is one of the few purely mechanical levers a creator has over discoverability — yet most people either skip tags entirely or reuse the same generic list on every upload. The YouTube Tag Generator takes your video's topic and produces three distinct tag sets, each mixing broad terms (the ones with real search volume and real competition) with longer, more specific phrases that have a genuine chance of ranking. That mix matters: broad-only tags get lost in a sea of established channels, while long-tail-only tags miss the traffic entirely. This is built for anyone actively growing a channel — new creators trying to get their first videos found, and established ones optimizing a backlog of older uploads that never got proper tags. The best use case is pairing it with the Title and Description Generators for the same video, so the tags, title, and description all reinforce the same keyword rather than working against each other.",
     category: "creator-studio",
     iconName: "Tags",
     keywords: ["youtube tag generator", "youtube tags", "video seo", "youtube keywords"],
@@ -530,6 +542,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Every resolution, one paste away.",
     description:
       "Paste any YouTube video URL to preview and download its thumbnail in every available resolution.",
+    introParagraph:
+      "YouTube generates several resolutions of every video's thumbnail automatically, but there's no built-in way to actually download one — useful when you're building a video roundup, writing about a video, or just want the original image at full quality instead of a screenshot of a screenshot. The YouTube Thumbnail Downloader takes any video URL and surfaces every available resolution for its thumbnail, letting you preview and download the exact size you need directly from YouTube's own servers. It's a small, specific tool aimed at content creators researching competitors, writers and bloggers referencing a specific video, and anyone building a video collection or playlist page who needs real thumbnail images rather than placeholder graphics. It also comes in handy for something as ordinary as recovering a thumbnail for a video you made yourself but never saved a local copy of. Because it pulls directly from YouTube's CDN rather than generating or caching anything itself, the image quality is always exactly what YouTube itself is serving — nothing recompressed or degraded along the way.",
     category: "creator-studio",
     iconName: "Youtube",
     keywords: ["youtube thumbnail downloader", "download youtube thumbnail", "youtube thumbnail grabber"],
@@ -564,6 +578,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "The right mix, from broad reach to niche discovery.",
     description:
       "Generate three sets of relevant Instagram hashtags for your post, mixing broad and niche-specific tags for better reach.",
+    introParagraph:
+      "Instagram's own guidance has shifted over the years, but the underlying mechanic hasn't: hashtags are still one of the few ways a post can reach people who don't already follow you, and using the same 10 tags on every post is a reliable way to plateau. The Instagram Hashtag Generator reads your post's topic and returns three hashtag sets, each deliberately mixed across broad, medium-competition, and niche-specific tags — broad tags get your post seen briefly by a lot of people, niche tags get it seen for longer by the right people, and a good set needs both. It's built for creators, small businesses, and anyone managing an Instagram presence who's tired of guessing which 20-30 tags to paste in. The best results come from treating each post individually rather than keeping one saved hashtag list forever — a travel photo and a product shot shouldn't share the exact same tags — and pairing this with the Caption Generator so the whole post, not just the hashtags, is built around one clear topic.",
     category: "creator-studio",
     iconName: "Hash",
     keywords: ["instagram hashtag generator", "instagram hashtags", "hashtags for instagram"],
@@ -717,6 +733,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "More than a job title, in 220 characters.",
     description:
       "Generate three compelling LinkedIn headline options from your role and focus — built to stand out in search and on your profile.",
+    introParagraph:
+      "The single most common LinkedIn headline is a job title and nothing else, which technically describes the person but does nothing to differentiate them from thousands of others with the same title — and the headline is prime real estate, visible everywhere a profile shows up in search or in someone's feed. The LinkedIn Headline Generator takes a description of your role and what makes your work distinctive and produces three headline options built to go beyond the job title — signaling a specific focus, outcome, or area of expertise instead. It's aimed at anyone actively job searching, open to recruiters finding them, or simply trying to make their profile represent their actual work rather than a generic label. The strongest headlines tend to combine a role with one concrete specialty or result, which is exactly the structure these options are built around — treat the three variations as different angles on the same core story, and pick whichever framing feels most true to how you'd actually describe your work out loud.",
     category: "linkedin-studio",
     iconName: "PenTool",
     keywords: ["linkedin headline generator", "linkedin headline ideas", "professional headline"],
@@ -860,7 +878,7 @@ export const TOOLS: ToolDefinition[] = [
     name: "LinkedIn Job Description Generator",
     tagline: "A posting candidates will actually read.",
     description:
-      "Generate three LinkedIn job posting drafts from your role details — intro, responsibilities, and qualifications, structured the way LinkedIn postings are read.",
+      "Generate three LinkedIn job posting drafts from your role details — intro, responsibilities, and qualifications, structured the way postings are read.",
     category: "linkedin-studio",
     iconName: "ClipboardList",
     keywords: ["linkedin job description generator", "job posting generator", "job description template"],
@@ -925,6 +943,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Direct, sharp, and under 280 characters.",
     description:
       "Generate three tweet options from your topic — direct, clear, and written to fit X's character limit.",
+    introParagraph:
+      "A post with a clear, direct point tends to outperform a meandering one on X, but writing tight, specific text under a 280-character limit is a genuinely different skill from writing a longer piece — every word has to earn its place. The Tweet Generator takes a topic or observation and produces three distinct post options, each written to make one clear point without wasted words, ready to post as-is or adjust to match your own voice. It's built for people actively posting on X — creators building an audience, professionals sharing insight in their field, or anyone who has a good thought and fifteen seconds to turn it into something worth reading. Because tone matters as much as content on this platform, the three generated options are usually genuinely different from each other rather than three phrasings of the same idea — read all three before picking, since the best fit often isn't the first one.",
     category: "creator-studio",
     iconName: "MessageSquare",
     keywords: ["tweet generator", "twitter post generator", "x post generator"],
@@ -1112,6 +1132,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Room to tell the whole update.",
     description:
       "Generate three Facebook post drafts from your topic — a bit longer and more conversational than other platforms, the way Facebook posts read best.",
+    introParagraph:
+      "Facebook rewards posts that read like an actual person wrote them for actual friends or followers, not a brand broadcasting an announcement — and that conversational register is harder to write on demand than it sounds, especially for a business account trying to sound approachable without sounding forced. The Facebook Post Generator takes your topic and produces three post drafts in that warmer, more conversational style Facebook posts tend to need, each built around a hook worth reading past the first line and a genuine update or story rather than a flat announcement. It's aimed at small business owners managing their own Page, community managers posting on behalf of a group, and anyone maintaining a presence without a dedicated social media team. Pairing the generated text with an actual photo consistently outperforms text-only posts on this platform specifically, so treat the caption as one half of the post rather than the whole thing.",
     category: "creator-studio",
     iconName: "Newspaper",
     keywords: ["facebook post generator", "facebook post ideas", "facebook content generator"],
@@ -1265,6 +1287,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "50-60 characters that earn the click.",
     description:
       "Generate three SEO meta title options from your page's topic — keyword-aware and sized to fit search results.",
+    introParagraph:
+      "A page's title tag does two jobs at once — it's a ranking signal search engines weigh, and it's the literal blue link text a person decides whether to click — and writing one that does both well, inside a roughly 60-character display limit, is genuinely harder than it looks. The Meta Title Generator takes a description of your page's content and produces three distinct title options, each built to include the core topic near the front (where it carries more weight) while still reading as something a person would actually want to click, not a keyword string. It's built for anyone publishing content who's currently leaving titles to be auto-generated from the page's H1 — bloggers, marketers, small business owners maintaining their own site — since a title written on purpose consistently outperforms one nobody thought about. Pairing a generated title with the Meta Description Generator for the same page rounds out the full search-result snippet, rather than optimizing the title in isolation and leaving the description as an afterthought.",
     category: "marketing",
     iconName: "Type",
     keywords: ["meta title generator", "seo title generator", "page title generator"],
@@ -1409,6 +1433,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "See your content the way search engines count it.",
     description:
       "Check word frequency and a target keyword's density in your text — a sanity check against keyword stuffing.",
+    introParagraph:
+      "Keyword density stopped being a precise ranking lever years ago, but the underlying question it answers is still useful: does this page actually, verifiably contain the language a reader — and a search engine — would expect it to contain, or does it just feel like it does when you're the one who wrote it. The Keyword Density Checker analyzes a block of text against a specific target keyword (or phrase) and reports exactly how often it appears, what percentage of the total word count that represents, and which other words show up most frequently once common filler words are filtered out. It's a sanity check for content writers and SEO practitioners before publishing — catching both keyword stuffing that reads awkwardly and the opposite problem, content that never actually mentions the term it's supposedly targeting. Use it as a diagnostic during editing, not a target to hit exactly; a specific density percentage has never been what search engines actually reward, and writing toward one tends to produce noticeably worse prose than writing for a reader first.",
     category: "marketing",
     iconName: "Percent",
     keywords: ["keyword density checker", "keyword density calculator", "content seo checker"],
@@ -1425,6 +1451,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Compact JSON, made readable.",
     description:
       "Pretty-print JSON with proper indentation, entirely in your browser — with a clear error if it's invalid.",
+    introParagraph:
+      "Minified or hand-typed JSON — a single unbroken line from an API response, or a config file someone edited in a hurry — is close to unreadable, and squinting at nested braces to find a mismatched bracket is a bad use of anyone's time. The JSON Formatter takes any JSON input and pretty-prints it with consistent 2-space indentation, instantly, entirely in your browser, with the exact parse error shown clearly if the input isn't valid JSON at all. It's a daily tool for developers debugging an API response, reviewing a config file, or cleaning up JSON before pasting it into documentation or a bug report. The formatted result is one click away from being copied or downloaded as a file, so it fits naturally into a workflow that starts with a messy paste and ends with something clean saved or shared. Because nothing is sent to a server, it's also safe to use on JSON containing real data you wouldn't want to paste into a random web tool — API keys, internal config, anything sensitive stays exactly where it was, processed locally and never transmitted.",
     category: "developer",
     iconName: "Braces",
     keywords: ["json formatter", "json pretty print", "json beautifier"],
@@ -1505,6 +1533,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Cryptographically random, not Math.random().",
     description:
       "Generate a strong password with customizable length and character types, using your browser's secure random number generator.",
+    introParagraph:
+      "Reusing passwords, or generating them with a mental pattern a person could guess, remains one of the most common ways accounts actually get compromised — and the fix isn't complicated, it's just tedious to do by hand for every new account. The Password Generator produces genuinely random passwords using the browser's cryptographically secure random number generator (not a weaker pseudo-random function), with independent control over length and character types, and a straightforward strength rating so you're not guessing whether a given password is actually strong. It's for anyone setting up a new account, rotating an old password, or standardizing on strong, unique passwords across every service instead of variations on the same one. Visually ambiguous characters (0 versus O, 1 versus l versus I) are excluded by default, which matters if you ever need to type a generated password by hand rather than paste it — a small detail that saves a real, common frustration.",
     category: "developer",
     iconName: "KeyRound",
     keywords: ["password generator", "strong password generator", "random password"],
@@ -1521,6 +1551,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "SHA-1 through SHA-512, verified correct.",
     description:
       "Hash text using SHA-1, SHA-256, SHA-384, or SHA-512 via your browser's native Web Crypto API.",
+    introParagraph:
+      "A hash is a one-way fingerprint of some input — the same input always produces the same hash, but the hash can never be reversed back to the original — which makes it useful for exactly the kind of integrity checks and non-reversible comparisons that come up constantly in development work. The Hash Generator computes SHA-1, SHA-256, SHA-384, and SHA-512 hashes using the browser's native, cryptographically verified Web Crypto API — real, standard implementations, not a hand-rolled approximation — entirely client-side. It's a routine tool for developers verifying a file's integrity against a published checksum, generating a deterministic identifier from some input data, or working with any system that expects a specific hash algorithm's output. MD5 is deliberately not offered: it isn't part of the Web Crypto API by design, since it's no longer considered cryptographically secure, and SHA-256 or higher is the right choice for anything where that security property actually matters.",
     category: "developer",
     iconName: "Hash",
     keywords: ["hash generator", "sha256 generator", "sha1 generator"],
@@ -1585,6 +1617,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Any text or URL, instantly scannable.",
     description:
       "Generate a scannable QR code from any text or URL, ready to download or embed.",
+    introParagraph:
+      "A QR code is one of the few pieces of offline material that can point directly at something online — a menu, a form, a payment link, a WiFi network — and generating one correctly, at a size that actually scans reliably once printed, is worth getting right the first time rather than troubleshooting a code nobody's phone can read. The QR Code Generator turns any URL or text into a scannable code at your choice of size, generated through an established public QR service rather than an unverified in-browser implementation, so what you download is a genuinely reliable, real QR code. It's useful anywhere physical and digital need to connect — a restaurant menu, a business card, a poster linking to an event page, a WiFi network shared without typing a long password. For anything printed and displayed at a distance, size matters more than people expect: a code that scans instantly on a phone six inches away can fail entirely from across a room, so err toward the larger size options for anything on a poster or sign.",
     category: "image-studio",
     iconName: "QrCode",
     keywords: ["qr code generator", "qr code maker", "generate qr code"],
@@ -1601,6 +1635,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Smaller files, right in your browser.",
     description:
       "Compress an image to reduce its file size, with an adjustable quality slider — processed entirely in your browser, nothing uploaded.",
+    introParagraph:
+      "A photo straight off a modern phone camera is often needlessly large for anything it's actually going to be used for — a web page, an email attachment, a form upload with a size cap — and that extra weight translates directly into slower page loads and, on some platforms, outright upload failures. The Image Compressor re-encodes your image at an adjustable quality level, right in your browser, showing you exactly how much smaller the result is before you download it. It's built for web developers trying to protect their site's load time, anyone attaching images to an email with a size limit, and sellers or creators uploading to platforms that quietly compress (and often visibly degrade) anything too large themselves. The quality slider is the whole game here: dragging it down to 60-70% typically cuts file size dramatically with compression artifacts most people won't notice, while staying above 85% keeps virtually all visual detail at a smaller — if less dramatic — savings. For a batch of photos going on the same page, compressing each one to a similar target size, rather than a uniform quality percentage, tends to give the most consistent-looking result.",
     category: "image-studio",
     iconName: "Minimize2",
     keywords: ["image compressor", "compress image", "reduce image size"],
@@ -1617,6 +1653,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Exact dimensions, in seconds.",
     description:
       "Resize an image to specific pixel dimensions — processed entirely in your browser, nothing uploaded.",
+    introParagraph:
+      "Every platform has its own preferred dimensions — a thumbnail here, a banner there, a specific aspect ratio for an ad unit — and resizing images one-off in a heavyweight photo editor is disproportionate effort for what's usually a thirty-second task. The Image Resizer runs entirely in your browser: upload an image, set the exact width and height you need, and download the result, with no file ever leaving your device or touching a server. It's aimed at anyone who needs a quick, precise resize without opening design software — a marketer prepping assets for five different ad platforms, a seller resizing product photos to a marketplace's exact spec, a student formatting an image for a document with a strict size limit. Because width and height are set independently rather than automatically locked to the original ratio, it's worth entering dimensions that match your source image's proportions if you want to avoid visible stretching; for anything where the ratio itself needs to change intentionally, that flexibility is exactly the point.",
     category: "image-studio",
     iconName: "Maximize2",
     keywords: ["image resizer", "resize image", "change image dimensions"],
@@ -1680,7 +1718,9 @@ export const TOOLS: ToolDefinition[] = [
     name: "JWT Decoder",
     tagline: "See exactly what's inside a token.",
     description:
-      "Decode a JWT's header and payload to inspect its claims — including an expiration check. Signature is not verified (that requires the signing key, which this tool never has).",
+      "Decode a JWT's header and payload to inspect its claims, including expiration. Signature is not verified — that requires a key this tool never has.",
+    introParagraph:
+      "A JWT looks like an opaque string of characters, but it's actually just base64url-encoded JSON in disguise — readable by anyone the moment they know how to decode it, which is exactly what makes debugging authentication issues so much faster once you can see what's actually inside a given token. The JWT Decoder splits a token into its header and payload, decodes both back to readable JSON, and flags whether the token has already expired based on its `exp` claim — all without ever touching the signature, which requires a secret key this browser-based tool never has and has no business asking for. It's a routine debugging tool for developers working with authentication — checking what claims a token actually carries, confirming an expiration time matches what's expected, or verifying a backend is issuing tokens with the right shape. It's worth remembering this only decodes, never verifies: a token's contents are visible to anyone holding it whether or not its signature is actually valid, so never rely on a JWT's payload alone as proof of anything without server-side signature verification too.",
     category: "developer",
     iconName: "Lock",
     keywords: ["jwt decoder", "decode jwt", "json web token", "jwt debugger"],
@@ -1744,7 +1784,9 @@ export const TOOLS: ToolDefinition[] = [
     name: "GST Calculator",
     tagline: "Add it, remove it, see the split.",
     description:
-      "Calculate GST (India's Goods and Services Tax) either way — add tax to a pre-tax amount, or extract it from a tax-inclusive amount — with a CGST/SGST breakdown.",
+      "Calculate India's GST either way — add tax to a pre-tax amount, or extract it from a tax-inclusive amount — with a CGST/SGST breakdown.",
+    introParagraph:
+      "GST math is simple in principle — a fixed percentage added to or extracted from an amount — but doing it correctly by hand, especially the extraction direction (working backward from a tax-inclusive price to find the original amount), is easy to get subtly wrong, and being off by even a little matters on an invoice. The GST Calculator handles both directions explicitly: add GST to a pre-tax amount to get the final price, or enter a tax-inclusive amount and extract exactly how much of it was tax, with a CGST/SGST split shown for intra-state transactions. It's aimed at small business owners writing invoices, freelancers pricing their services, and anyone in India who needs a quick, reliable GST figure without opening a spreadsheet. The standard slabs (5%, 12%, 18%, 28%) are one tap away, but double-check the applicable rate for your specific goods or service before relying on the output for actual filing — this tool gets the math exactly right, but which rate applies is a separate question worth confirming against an official source.",
     category: "finance",
     iconName: "Receipt",
     keywords: ["gst calculator", "gst calculation india", "cgst sgst calculator"],
