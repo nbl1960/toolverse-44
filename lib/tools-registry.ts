@@ -200,6 +200,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Clean tabular data, structured instantly.",
     description:
       "Paste CSV and get well-formed JSON out — correctly handles quoted fields, embedded commas, and escaped quotes, not just a naive comma split.",
+    introParagraph:
+      "CSV looks simple until a field contains a comma, or a quote, or a line break — at which point a naive comma-split implementation silently produces corrupted data, which is a genuinely common way spreadsheet exports break downstream systems that assume the conversion works without checking. The CSV to JSON Converter implements real CSV parsing — correctly handling quoted fields with embedded commas, escaped double-quotes, and multi-line values — and turns the first row into JSON object keys for every row that follows. It's built for developers importing spreadsheet exports into an application, data analysts prepping a CSV for a script that expects JSON, and anyone who's been burned once by a 'quick' comma-split that broke on the first row with a comma inside a name or address field. Because parsing happens entirely in the browser, it's also a reasonable way to spot-check a CSV export's structure before trusting it in a larger pipeline — if this tool parses it cleanly, a properly-written downstream parser almost certainly will too.",
     category: "data",
     iconName: "FileJson",
     keywords: ["csv", "json", "convert", "data", "file conversion"],
@@ -242,6 +244,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "See what consistent investing actually adds up to.",
     description:
       "Project your SIP's final corpus, total returns, and CAGR from a monthly investment, return rate, and period — with step-up and inflation options.",
+    introParagraph:
+      "The pitch for a Systematic Investment Plan is always some version of 'small amounts add up' — but seeing the actual number a modest monthly investment turns into over ten or twenty years — with compounding actually doing the work — is far more convincing than the pitch alone, and far more useful for actually planning. The SIP Calculator projects your final corpus, total returns, and CAGR from a monthly investment amount, an expected return rate, and a time period, with optional annual step-up (increasing your contribution each year) and inflation adjustment so the final number reflects real purchasing power, not just a raw total. It's built for anyone planning a long-term investment — evaluating whether a monthly amount is actually enough for a goal, or comparing how a longer time horizon or a modest yearly increase changes the outcome more than people usually expect. The step-up option in particular is worth experimenting with: a contribution that grows by even 5-10% a year, matched loosely to real income growth, tends to close the gap toward a target corpus far faster than an equivalent lump-sum increase in the base monthly amount.",
     category: "finance",
     iconName: "TrendingUp",
     keywords: [
@@ -268,6 +272,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Find your EMI, or find what you can borrow.",
     description:
       "Calculate your monthly payment for a given loan amount, or flip it around and find the loan amount a target monthly payment can support.",
+    introParagraph:
+      "Most people think about a loan in one direction — how much would this cost me — but the more useful question is often the reverse: given a monthly payment I know I can afford, how much can I actually borrow. The Loan Calculator handles both: enter a loan amount, rate, and tenure to find the monthly payment, or flip it around and enter a target monthly payment to find the loan amount it can support. It's built for anyone shopping for a home loan, car loan, or personal loan who wants to sanity-check a lender's offer or set a realistic budget before even talking to a lender, rather than finding out the affordable number only after applying. Running the same scenario at a couple of different tenures side by side is usually more revealing than checking one combination in isolation — a longer tenure lowers the monthly payment but meaningfully increases total interest paid, a tradeoff that's easy to underweight when only looking at the monthly figure a lender leads with.",
     category: "finance",
     iconName: "Banknote",
     keywords: ["loan calculator", "borrowing calculator", "affordability calculator", "loan amount", "monthly payment"],
@@ -406,6 +412,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Titles that earn the click without the clickbait.",
     description:
       "Generate three compelling YouTube video title options from your topic — attention-grabbing, search-friendly, and true to your content.",
+    introParagraph:
+      "The gap between a video that gets clicked and one that gets scrolled past is often just the title, and it's a strange kind of writing — short enough to fit YouTube's display width, honest enough not to feel like clickbait once someone's actually watching, and specific enough to signal exactly what the video delivers. The YouTube Title Generator takes your video's topic and produces three distinct title options built around that balance, mixing curiosity with a clear, concrete promise rather than vague hype. It's aimed at creators uploading regularly who don't want to spend twenty minutes agonizing over four words, and at anyone going back through an older video that never got proper attention with its original, throwaway title. The three options are usually genuinely different angles — one more direct, one more curiosity-driven — rather than three phrasings of the same idea, so it's worth reading all three rather than defaulting to the first. Pairing the chosen title with the Description and Tag Generators for the same video keeps the whole upload's metadata pointed at one consistent topic instead of working against itself.",
     category: "creator-studio",
     iconName: "Type",
     keywords: ["youtube title generator", "video title ideas", "youtube seo", "clickable titles"],
@@ -423,6 +431,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "A full description draft, not just a blank box.",
     description:
       "Generate three complete, SEO-friendly YouTube video descriptions from your topic and key points — hook, context, and call to action included.",
+    introParagraph:
+      "A YouTube description is one of the few places a creator gets real room to tell both viewers and YouTube's own search system what a video is actually about, and yet most descriptions are either a blank box left empty or two rushed sentences typed right before hitting publish. The YouTube Description Generator takes your topic and key points and writes three complete drafts — each with an opening hook (the part shown before the fold), context about what the video covers, and a natural call to action — rather than a single generic paragraph. It's built for creators who know a good description helps both search ranking and viewer retention but don't want writing it to eat into time better spent editing or filming. The generated draft is a strong starting structure; adding your actual links (socials, related videos, timestamps) afterward turns it into a complete, working description rather than leaving it as prose alone. Used alongside the Tag and Title Generators for the same upload, it's one part of getting a video's full metadata working together instead of each piece optimized in isolation.",
     category: "creator-studio",
     iconName: "AlignLeft",
     keywords: ["youtube description generator", "video description", "youtube seo description"],
@@ -561,6 +571,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Captions that sound like you, not an ad.",
     description:
       "Generate three engaging Instagram caption options from your post's topic — authentic, conversational, and ready to post.",
+    introParagraph:
+      "The best-performing Instagram captions tend to sound like an actual person talking, not a brand reciting a description of its own photo — and that conversational, slightly imperfect tone is oddly hard to write on command when you're staring at your own post. The Instagram Caption Generator takes a short description of your photo or moment and returns three caption options built for that authentic register: no hashtags mixed in, no forced enthusiasm, just a caption that reads like something a person would actually post. It's for creators, small businesses, and anyone managing an account who wants captions that add something — a question, a relatable detail, a specific thought — rather than a flat description restating what's already visible in the photo. A caption with a light prompt to engage (a question, an invitation to share an opinion) tends to earn more comments than one that doesn't ask anything of the reader, which in turn helps the post's reach — worth keeping in mind when picking between the three generated options. Pairing the chosen caption with the Hashtag Generator for the same post rounds out the whole thing rather than optimizing the caption alone.",
     category: "creator-studio",
     iconName: "MessageCircle",
     keywords: ["instagram caption generator", "instagram captions", "caption ideas"],
@@ -751,6 +763,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Your career story, told in your own voice.",
     description:
       "Generate three LinkedIn About section drafts from your background and experience — a natural first-person narrative, not a résumé bullet list.",
+    introParagraph:
+      "A LinkedIn About section is one of the only places on the platform with room for an actual narrative — not a bullet list of past titles, but the story of how someone got to where they are and what they're focused on now — and yet most About sections either sit empty or read like a résumé pasted in wholesale. The LinkedIn About Generator takes a summary of your background and experience and writes three complete, first-person drafts: a few short paragraphs that read as a real career story, not a list. It's aimed at anyone updating a stale profile, professionals in the middle of a job search, and people navigating a career change whose existing job titles don't obviously connect to where they're headed next — narrative is exactly the tool for making that connection legible to someone skimming a profile. Because it only knows what you tell it, specific details — a real project, a real number, a real turning point — make the difference between a generic-sounding draft and one that actually sounds like your career. Treat the result as a strong structural draft, then add the one or two specific, personal details that make it unmistakably yours rather than a template anyone in your field could have used.",
     category: "linkedin-studio",
     iconName: "UserCircle",
     keywords: ["linkedin about generator", "linkedin about section", "linkedin bio generator"],
@@ -1321,6 +1335,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Tell crawlers exactly where to go.",
     description:
       "Build a valid robots.txt file from allow/disallow rules and a sitemap URL — ready to paste at your domain root.",
+    introParagraph:
+      "A robots.txt file is one of the first things a search engine crawler checks on any domain, and a small mistake in it — accidentally disallowing a path that should be indexed, or forgetting to reference the sitemap at all — can quietly suppress a site's visibility in ways that are hard to notice until traffic is already down. The Robots.txt Generator builds a valid, correctly-formatted robots.txt from allow and disallow rules, a user-agent target, and a sitemap URL, so the syntax is right even if the underlying rules aren't something you write by hand often enough to remember cleanly. It's aimed at developers launching a new site, marketers taking over SEO for an existing one, and anyone who's inherited a robots.txt file they're not fully confident is doing what they think it's doing. It's worth remembering that Disallow is a request respected by well-behaved crawlers, not a security boundary — anyone can still view a disallowed path directly by URL, so it should never be the only thing standing between the public internet and something actually sensitive.",
     category: "marketing",
     iconName: "Bot",
     keywords: ["robots.txt generator", "robots txt", "crawler rules generator"],
@@ -1485,6 +1501,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Text to Base64, UTF-8 safe.",
     description:
       "Encode text to Base64 entirely in your browser — correctly handles emoji and non-Latin text.",
+    introParagraph:
+      "Base64 shows up constantly in web development — embedding a small image directly in CSS, encoding data for a URL-safe token, preparing a payload for an API that expects text rather than binary — and while the algorithm itself is simple, getting it right for anything beyond plain ASCII text (emoji, accented characters, non-Latin scripts) trips up naive implementations more often than people expect. The Base64 Encoder handles this correctly: proper UTF-8 encoding before the Base64 conversion, so text with emoji or non-English characters round-trips exactly, not just plain English strings. It's a routine tool for developers embedding data inline, preparing values for URL parameters, or working with any system that expects Base64-encoded input. Everything runs in your browser with nothing sent to a server, which matters if what you're encoding contains anything you wouldn't want passed through a third party's servers — an API key, a config value, anything sensitive stays local.",
     category: "developer",
     iconName: "Lock",
     keywords: ["base64 encoder", "base64 encode", "text to base64"],
@@ -1517,6 +1535,8 @@ export const TOOLS: ToolDefinition[] = [
     tagline: "Unique identifiers, generated instantly.",
     description:
       "Generate one or more RFC 4122 v4 UUIDs using cryptographically secure randomness, entirely in your browser.",
+    introParagraph:
+      "A UUID is the standard way to generate an identifier that's guaranteed — for any practical purpose — never to collide with another one, even generated independently on a different machine with no coordination between them, which is exactly why they're everywhere in database primary keys, distributed systems, and API identifiers. The UUID Generator produces RFC 4122 version 4 UUIDs using the browser's cryptographically secure random number generator, not a weaker pseudo-random source, in whatever quantity you need at once. It's a routine tool for developers seeding test data, generating a batch of unique identifiers for a database migration, or just needing one quick UUID for a config file or a code sample without spinning up a script to generate it. Each one comes with a one-click copy button, and the whole batch can be copied together when you need several at once for a seed file or a set of test fixtures. Because generation happens entirely in your browser, there's no server round-trip and no rate limit to worry about even when generating a large batch at once.",
     category: "developer",
     iconName: "Fingerprint",
     keywords: ["uuid generator", "guid generator", "unique id generator"],
