@@ -1,17 +1,20 @@
 # ToolVerse
 
 A scalable, production-ready platform for hosting many focused web tools
-under one roof. **Version 1.0** ships **100 live tools, zero
-placeholders** — AI Email Writer, a complete "Phase 1 Finance" suite of
-10 calculators, a 40-tool "Creator Studio" suite spanning YouTube,
-Instagram, X (Twitter), and Facebook, a 13-tool "LinkedIn Studio" suite,
-20 SEO/Developer utilities, a 6-tool "Image Studio" suite, and 10 more
-across Writing, Productivity, Developer, Design, Marketing, and Data — and
-an architecture designed to grow to 100+ tools without touching routing
-code.
+under one roof, fronted by an AI Guide that recommends the right tool
+from a plain-language description of what you're trying to do.
+**Version 2.0** ships **100 live tools, zero placeholders** — AI Email
+Writer, a complete "Phase 1 Finance" suite of 10 calculators, a 40-tool
+"Creator Studio" suite spanning YouTube, Instagram, X (Twitter), and
+Facebook, a 13-tool "LinkedIn Studio" suite, 20 SEO/Developer utilities,
+a 6-tool "Image Studio" suite, and 10 more across Writing, Productivity,
+Developer, Design, Marketing, and Data — on an architecture that adds
+tool #101 the same way it added tool #2: one registry entry, no new
+routing code.
 
 Built with Next.js 15 (App Router), React, TypeScript, Tailwind CSS,
-shadcn/ui-style components, and the Google Gemini API.
+shadcn/ui-style components, and the Google Gemini API — deployed on
+Cloudflare Workers via OpenNext.
 
 ---
 
@@ -340,6 +343,45 @@ CGST/SGST split).
   which drives the homepage's "Recently added" rail automatically.
 - `isCalculator: true` adds `applicationSubCategory: "Calculator"` to a
   tool's JSON-LD automatically.
+
+---
+
+## The AI Guide — how it stays honest
+
+The homepage's AI Guide (`components/shared/ai-assistant.tsx`,
+`app/api/assistant/search/route.ts`) takes a plain-language request and
+recommends real tools from the catalog. The one architectural rule
+everything else here serves: **Gemini never gets to assert a tool's
+name, description, icon, or URL** — its only two jobs are picking which
+slugs (from a compact catalog built fresh from `getLiveTools()` on every
+request) match the request, and writing a one-sentence "why." Every
+other field shown to the user is looked up fresh from the same registry
+every other page uses, via `getToolBySlug()`. A slug Gemini returns that
+doesn't exist in the registry is silently dropped, never surfaced as an
+error — the user just sees fewer, all-real results.
+
+Three things make this reliable in practice, not just in principle:
+
+- **Structured output** (`responseMimeType: "application/json"` +
+  `responseSchema` in `lib/gemini.ts`'s `GeminiGenerationConfig`)
+  constrains Gemini's output at the token-sampling level, not just via
+  prompt instructions — this is what actually prevents malformed-JSON
+  parse failures.
+- **Retry-once on unparseable responses**
+  (`fetchRecommendationsWithRetry` in the route) — a genuinely malformed
+  response gets one automatic retry before falling back to a friendly
+  error message; a response that's valid JSON but has a few
+  individually-malformed items just has those items filtered out, no
+  retry needed.
+- **Confidence tiers are enum-constrained** in the schema, then
+  re-validated server-side against the same three literal strings before
+  ever reaching the client — defense in depth, not trusting the schema
+  constraint alone.
+
+Related tools shown under each recommendation come from the same
+`getRelatedTools()` every tool page's own Related Tools rail uses —
+computed locally, not a second AI call, which is also why the whole
+round trip stays fast.
 
 ---
 
