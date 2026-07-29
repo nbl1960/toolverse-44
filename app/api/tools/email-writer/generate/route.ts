@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateGeminiText } from "@/lib/gemini";
+import { createRateLimiter, getClientIp } from "@/lib/generator-api";
 import { emailFormSchema } from "@/lib/tools/email-writer/validations";
 import { LENGTH_OPTIONS, TONE_OPTIONS } from "@/lib/tools/email-writer/constants";
 import type { GenerateEmailResponse, GeneratedEmail } from "@/lib/tools/email-writer/types";
@@ -9,26 +10,7 @@ import type { GenerateEmailResponse, GeneratedEmail } from "@/lib/tools/email-wr
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-/** Basic in-memory rate limiter: N requests per IP per minute. */
-const RATE_LIMIT = 12;
-const RATE_WINDOW_MS = 60_000;
-const requestLog = new Map<string, number[]>();
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const timestamps = (requestLog.get(ip) ?? []).filter(
-    (t) => now - t < RATE_WINDOW_MS
-  );
-  timestamps.push(now);
-  requestLog.set(ip, timestamps);
-  return timestamps.length > RATE_LIMIT;
-}
-
-function getClientIp(request: NextRequest): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]?.trim() ?? "unknown";
-  return request.headers.get("x-real-ip") ?? "unknown";
-}
+const isRateLimited = createRateLimiter(12);
 
 /** Builds the instruction prompt sent to Gemini for a given, validated form. */
 function buildPrompt(input: {
