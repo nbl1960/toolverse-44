@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Clock, Search as SearchIcon, TrendingUp, X } from "lucide-react";
+import { ArrowRight, Clock, Mic, Search as SearchIcon, TrendingUp, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { resolveIcon } from "@/lib/icon-map";
 import { highlightMatch } from "@/lib/highlight-match";
 import { useToolSearch } from "@/hooks/use-tool-search";
+import { useVoiceSearch } from "@/hooks/use-voice-search";
 import { clearRecentSearches, POPULAR_SEARCHES } from "@/lib/recent-searches";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -55,6 +56,10 @@ export function ToolSearch() {
     moveActive,
     recordSearch,
   } = useToolSearch();
+  const { isSupported: isVoiceSupported, isListening, startListening } = useVoiceSearch((transcript) => {
+    setQuery(transcript);
+    trackEvent("search_voice_result", { query_length: String(transcript.trim().length) });
+  });
 
   React.useEffect(() => {
     function handleGlobalKeyDown(event: KeyboardEvent) {
@@ -156,18 +161,33 @@ export function ToolSearch() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleInputKeyDown}
-                className="h-11 pl-9 pr-9"
+                className={cn("h-11 pl-9", isVoiceSupported ? "pr-16" : "pr-9")}
               />
-              {query && (
-                <button
-                  type="button"
-                  onClick={clearQuery}
-                  aria-label="Clear search"
-                  className="absolute right-2.5 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                >
-                  <X className="h-3.5 w-3.5" aria-hidden="true" />
-                </button>
-              )}
+              <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-0.5">
+                {isVoiceSupported && (
+                  <button
+                    type="button"
+                    onClick={startListening}
+                    aria-label={isListening ? "Listening…" : "Search by voice"}
+                    className={cn(
+                      "flex h-7 w-7 items-center justify-center rounded-full transition-colors",
+                      isListening ? "text-brass" : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    )}
+                  >
+                    <Mic className={cn("h-3.5 w-3.5", isListening && "animate-pulse")} aria-hidden="true" />
+                  </button>
+                )}
+                {query && (
+                  <button
+                    type="button"
+                    onClick={clearQuery}
+                    aria-label="Clear search"
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  >
+                    <X className="h-3.5 w-3.5" aria-hidden="true" />
+                  </button>
+                )}
+              </div>
             </div>
           </DialogHeader>
 

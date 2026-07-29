@@ -6,8 +6,10 @@ import { MobileNav } from "@/components/layout/mobile-nav";
 import { SITE_NAME } from "@/lib/site-config";
 
 const NAV_LINKS = [
+  { href: "/copilot", label: "Copilot" },
   { href: "/tools", label: "All Tools" },
   { href: "/categories", label: "Categories" },
+  { href: "/dashboard", label: "Dashboard" },
 ];
 
 /**

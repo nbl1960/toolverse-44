@@ -53,35 +53,115 @@ function getSearchIndex(): IndexEntry[] {
  * "email" surface "AI Email Writer" before some unrelated tool that
  * merely mentions "email" once in its long-form description.
  */
+/**
+ * Common shorthand/synonym expansions — when someone types "pic" they
+ * mean "image", when they type "pw" they mean "password". Expanding the
+ * query to include these lets a match succeed on a term that wouldn't
+ * appear verbatim in any tool's name/keywords otherwise.
+ */
+const SYNONYMS: Record<string, string[]> = {
+  pic: ["image", "photo", "picture"],
+  photo: ["image", "picture"],
+  pw: ["password"],
+  pwd: ["password"],
+  vid: ["video"],
+  yt: ["youtube"],
+  ig: ["instagram"],
+  li: ["linkedin"],
+  fb: ["facebook"],
+  calc: ["calculator"],
+  regex: ["pattern", "expression"],
+  cv: ["resume"],
+  json: ["data", "format"],
+  qr: ["code", "scanner"],
+  seo: ["search", "ranking"],
+  ai: ["generator", "writer"],
+};
+
+function expandQuery(query: string): string[] {
+  const terms = [query];
+  if (SYNONYMS[query]) terms.push(...SYNONYMS[query]);
+  return terms;
+}
+
+/** Cheap Levenshtein (edit) distance — fine at this scale (checked only against short tool names, only when the exact search comes up empty). */
+function editDistance(a: string, b: string): number {
+  const rows = a.length + 1;
+  const cols = b.length + 1;
+  const table: number[][] = Array.from({ length: rows }, (_, i) => [i, ...Array(cols - 1).fill(0)]);
+  for (let j = 0; j < cols; j++) table[0][j] = j;
+  for (let i = 1; i < rows; i++) {
+    for (let j = 1; j < cols; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      table[i][j] = Math.min(table[i - 1][j] + 1, table[i][j - 1] + 1, table[i - 1][j - 1] + cost);
+    }
+  }
+  return table[rows - 1][cols - 1];
+}
+
+/**
+ * Typo-tolerant fallback: checks the query against each word of each
+ * tool's name with a small edit-distance budget that scales with word
+ * length (short words need to match almost exactly; longer words
+ * tolerate a couple of typos) — "resizr" should still find "Resizer",
+ * but a 3-letter query being "close" to everything doesn't flood
+ * results with nonsense matches.
+ */
+function fuzzyMatchesName(query: string, nameLower: string): boolean {
+  if (query.length < 3) return false;
+  const budget = query.length <= 4 ? 1 : query.length <= 8 ? 2 : 3;
+  return nameLower.split(/\s+/).some((word) => {
+    if (Math.abs(word.length - query.length) > budget) return false;
+    return editDistance(query, word) <= budget;
+  });
+}
+
 export function searchToolsRanked(rawQuery: string, limit = 8): SearchResult[] {
   const query = rawQuery.trim().toLowerCase();
   if (!query) return [];
 
   const index = getSearchIndex();
+  const queryVariants = expandQuery(query);
   const scored: { entry: IndexEntry; score: number; matchField: SearchMatchField }[] = [];
 
   for (const entry of index) {
     let bestScore = 0;
     let bestField: SearchMatchField = "description";
 
-    if (entry.nameLower === query) {
-      bestScore = 100;
+    for (const variant of queryVariants) {
+      // A synonym expansion (e.g. "pic" -> "image") should never outrank
+      // a genuine direct match on the original term, so it's scored
+      // slightly lower at every tier — direct matches always win ties.
+      const isDirectTerm = variant === query;
+      const tierPenalty = isDirectTerm ? 0 : 3;
+
+      if (entry.nameLower === variant) {
+        bestScore = Math.max(bestScore, 100 - tierPenalty);
+        if (bestScore === 100 - tierPenalty) bestField = "name";
+      } else if (entry.nameLower.startsWith(variant)) {
+        bestScore = Math.max(bestScore, 90 - tierPenalty);
+        if (bestScore === 90 - tierPenalty) bestField = "name";
+      } else if (entry.nameLower.includes(variant)) {
+        bestScore = Math.max(bestScore, 75 - tierPenalty);
+        if (bestScore === 75 - tierPenalty) bestField = "name";
+      } else if (entry.categoryLower.includes(variant)) {
+        bestScore = Math.max(bestScore, 55 - tierPenalty);
+        if (bestScore === 55 - tierPenalty) bestField = "category";
+      } else if (entry.keywordsLower.includes(variant)) {
+        bestScore = Math.max(bestScore, 45 - tierPenalty);
+        if (bestScore === 45 - tierPenalty) bestField = "keywords";
+      } else if (entry.descriptionLower.includes(variant)) {
+        bestScore = Math.max(bestScore, 30 - tierPenalty);
+        if (bestScore === 30 - tierPenalty) bestField = "description";
+      }
+    }
+
+    // Typo-tolerant fallback only kicks in when nothing matched at all —
+    // it should never outrank a real substring match, only rescue an
+    // otherwise-empty result set from a misspelling.
+    if (bestScore === 0 && fuzzyMatchesName(query, entry.nameLower)) {
+      bestScore = 20;
       bestField = "name";
-    } else if (entry.nameLower.startsWith(query)) {
-      bestScore = 90;
-      bestField = "name";
-    } else if (entry.nameLower.includes(query)) {
-      bestScore = 75;
-      bestField = "name";
-    } else if (entry.categoryLower.includes(query)) {
-      bestScore = 55;
-      bestField = "category";
-    } else if (entry.keywordsLower.includes(query)) {
-      bestScore = 45;
-      bestField = "keywords";
-    } else if (entry.descriptionLower.includes(query)) {
-      bestScore = 30;
-      bestField = "description";
     }
 
     if (bestScore > 0) {

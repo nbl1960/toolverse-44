@@ -13,8 +13,10 @@ import { Button } from "@/components/ui/button";
 import { CATEGORIES } from "@/lib/categories";
 
 const NAV_LINKS = [
+  { href: "/copilot", label: "Copilot" },
   { href: "/tools", label: "All Tools" },
   { href: "/categories", label: "Categories" },
+  { href: "/dashboard", label: "Dashboard" },
 ];
 
 /** Hamburger menu for small screens: primary nav links + category shortcuts. */

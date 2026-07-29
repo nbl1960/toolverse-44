@@ -6,6 +6,8 @@ import { RelatedTools } from "@/components/shared/related-tools";
 import { FormulaSection } from "@/components/shared/formula-section";
 import { ExampleCalculation } from "@/components/shared/example-calculation";
 import { JsonLd } from "@/components/shared/json-ld";
+import { FavoriteButton } from "@/components/shared/favorite-button";
+import { TrackToolVisit } from "@/components/shared/track-tool-visit";
 import { getCategoryBySlug } from "@/lib/categories";
 import { resolveIcon } from "@/lib/icon-map";
 import { buildToolBreadcrumbs } from "@/lib/breadcrumbs";
@@ -69,6 +71,7 @@ export function ToolPageShell({ tool, children }: ToolPageShellProps) {
       <JsonLd data={buildToolWebPageJsonLd(tool)} />
 
       <Breadcrumbs items={buildToolBreadcrumbs(tool)} />
+      {tool.status === "live" && <TrackToolVisit slug={tool.slug} />}
 
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3.5">
@@ -85,12 +88,15 @@ export function ToolPageShell({ tool, children }: ToolPageShellProps) {
             <p className="mt-0.5 text-sm text-muted-foreground sm:text-base">{tool.tagline}</p>
           </div>
         </div>
-        {category && (
-          <span className="inline-flex w-fit items-center rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
-            <span className="sr-only">Category: </span>
-            {category.name}
-          </span>
-        )}
+        <div className="flex items-center gap-2 sm:self-center">
+          {category && (
+            <span className="inline-flex w-fit items-center rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
+              <span className="sr-only">Category: </span>
+              {category.name}
+            </span>
+          )}
+          <FavoriteButton slug={tool.slug} toolName={tool.name} />
+        </div>
       </div>
 
       <section aria-labelledby="tool-heading" className="mt-8">
