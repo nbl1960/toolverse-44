@@ -7,3 +7,5 @@ export const SITE_DESCRIPTION =
   "Find the perfect tool with AI. Explore 100+ free tools for images, YouTube, finance, SEO, developers, and productivity — describe your task and the AI Guide finds it instantly.";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://toolsverse.co";
+/** Update this to your real support inbox — used on the Contact page and throughout the legal pages. */
+export const SITE_SUPPORT_EMAIL = "support@toolsverse.co";
