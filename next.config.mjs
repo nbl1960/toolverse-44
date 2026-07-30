@@ -63,6 +63,26 @@ const nextConfig = {
         source: "/_next/static/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
+      {
+        // The favicon and site-wide OG image are generated from fully
+        // static content with zero external dependencies — identical
+        // until the next deploy. Explicit long-lived caching here is
+        // defense-in-depth: even if the platform's own static-generation
+        // caching is ever bypassed for any reason, this header still
+        // tells any CDN/browser in front of the Worker to serve a cached
+        // copy rather than re-invoke the comparatively expensive,
+        // Satori/WASM-based image generation on every hit.
+        source: "/icon",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, s-maxage=31536000" }],
+      },
+      {
+        // Same reasoning, for every per-tool OG image — each is fully
+        // determined by its slug and never changes until the next
+        // deploy, now that generateStaticParams pre-renders all of them
+        // at build time (see app/tools/[slug]/opengraph-image.tsx).
+        source: "/tools/:slug/opengraph-image",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, s-maxage=31536000" }],
+      },
     ];
   },
 };

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Wrench } from "lucide-react";
 import { CATEGORIES } from "@/lib/categories";
 import { SITE_NAME, SITE_SUPPORT_EMAIL } from "@/lib/site-config";
+import { APP_VERSION, BUILD_DATE } from "@/lib/version";
 
 const FOOTER_DESCRIPTION =
   "ToolVerse is an AI-powered platform offering 100+ free productivity, writing, developer, SEO, business, and utility tools.";
@@ -90,6 +91,9 @@ export function Footer() {
         <div className="container flex flex-col items-center justify-between gap-2 py-6 text-center text-xs text-muted-foreground sm:flex-row sm:text-left">
           <p>
             © {new Date().getFullYear()} {SITE_NAME}. All Rights Reserved.
+          </p>
+          <p>
+            {SITE_NAME} {APP_VERSION} • {BUILD_DATE}
           </p>
           <p>Built with Next.js &amp; Gemini.</p>
         </div>

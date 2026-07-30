@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getToolBySlug } from "@/lib/tools-registry";
+import { getAllTools, getToolBySlug } from "@/lib/tools-registry";
 import { SITE_NAME } from "@/lib/site-config";
 
 export const size = { width: 1200, height: 630 };
@@ -7,6 +7,18 @@ export const contentType = "image/png";
 
 interface OpengraphImageProps {
   params: Promise<{ slug: string }>;
+}
+
+/**
+ * Pre-renders one OG image per registry entry at build time — same
+ * pattern as the tool page itself. Without this, Next.js has no way to
+ * know these 100 routes exist ahead of time, so each one falls back to
+ * on-demand server rendering: real Satori/WASM image generation work
+ * running inside the Worker on every request instead of once at build
+ * time, then served as a static asset forever after.
+ */
+export function generateStaticParams() {
+  return getAllTools().map((tool) => ({ slug: tool.slug }));
 }
 
 /** Generates a per-tool social share image: tool name + tagline on the brand background. */
