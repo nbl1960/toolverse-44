@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Sparkles } from "lucide-react";
 import { PROMPT_LIBRARY, PROMPT_LIBRARY_CATEGORIES } from "@/lib/prompt-studio/library-content";
 import { getTargetModel } from "@/lib/prompt-studio/models";
 import { trackEvent } from "@/lib/analytics";
@@ -73,18 +73,28 @@ export function PromptLibraryGrid() {
                     {template.category} · {model?.name ?? template.targetModel}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy(template.id, template.prompt)}
-                  aria-label={`Copy the "${template.title}" prompt`}
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-brass/40 hover:text-brass"
-                >
-                  {copiedId === template.id ? (
-                    <Check className="h-3.5 w-3.5" aria-hidden="true" />
-                  ) : (
-                    <Copy className="h-3.5 w-3.5" aria-hidden="true" />
-                  )}
-                </button>
+                <div className="flex shrink-0 items-center gap-1">
+                  <Link
+                    href={`/prompt-studio?mode=analyzer&text=${encodeURIComponent(template.prompt)}`}
+                    onClick={() => trackEvent("prompt_library_analyze", { template: template.id })}
+                    aria-label={`Analyze the "${template.title}" prompt`}
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-brass/40 hover:text-brass"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(template.id, template.prompt)}
+                    aria-label={`Copy the "${template.title}" prompt`}
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-brass/40 hover:text-brass"
+                  >
+                    {copiedId === template.id ? (
+                      <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                    )}
+                  </button>
+                </div>
               </div>
               <p className="mt-3 line-clamp-4 flex-1 text-xs leading-relaxed text-muted-foreground">
                 {template.prompt}

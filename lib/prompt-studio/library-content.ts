@@ -135,6 +135,62 @@ export const PROMPT_LIBRARY: PromptTemplate[] = [
     prompt:
       "You are an interview coach. I'm preparing for a [ROLE] interview. Ask me the question \"[INTERVIEW QUESTION]\" one at a time, wait for my answer, then give specific, constructive feedback on structure, clarity, and impact before moving to the next round. Start with the first question now.",
   },
+  {
+    id: "cover-letter",
+    title: "Cover letter draft",
+    category: "Career",
+    targetModel: "claude",
+    prompt:
+      "You are a career coach. Write a cover letter for a [ROLE] position at [COMPANY]. I have [X years] of experience in [FIELD], and my strongest relevant achievement is [SPECIFIC ACHIEVEMENT]. Keep it to 3 paragraphs: an opening hook, a middle paragraph connecting my experience to their needs, and a confident closing. Avoid generic phrases like \"team player\" or \"hard worker\".",
+  },
+  {
+    id: "data-summary",
+    title: "Summarize a dataset in plain language",
+    category: "Business",
+    targetModel: "gemini",
+    prompt:
+      "You are a data analyst explaining findings to a non-technical stakeholder. Below is a summary of [DATASET/METRICS]. Explain the 3 most important takeaways in plain language, avoid statistical jargon, and end with one clear recommendation based on the data. Data:\n\n[PASTE DATA/METRICS HERE]",
+  },
+  {
+    id: "presentation-outline",
+    title: "Presentation outline",
+    category: "Business",
+    targetModel: "chatgpt",
+    prompt:
+      "You are a presentation coach. Create a slide-by-slide outline for a [DURATION]-minute presentation on [TOPIC] to an audience of [AUDIENCE]. For each slide, give a one-line headline and 2-3 supporting bullet points. Include a strong opening hook slide and a clear closing call-to-action slide. Aim for [NUMBER] slides total.",
+  },
+  {
+    id: "translate-tone",
+    title: "Translate while preserving tone",
+    category: "Writing",
+    targetModel: "claude",
+    prompt:
+      "You are a professional translator. Translate the following text from [SOURCE LANGUAGE] to [TARGET LANGUAGE], preserving the original tone (e.g. formal, playful, urgent) rather than translating literally word-for-word. If an idiom doesn't translate directly, use the closest natural equivalent in the target language rather than a literal translation. Text:\n\n[PASTE TEXT HERE]",
+  },
+  {
+    id: "video-script",
+    title: "Short-form video script",
+    category: "Marketing",
+    targetModel: "chatgpt",
+    prompt:
+      "You are a short-form video scriptwriter. Write a 30-45 second script for a video about [TOPIC], structured as: a 3-second hook, the main point delivered in plain language, and a call to action. Include brief [VISUAL CUE] notes in brackets alongside the spoken lines. Tone: [TONE, e.g. energetic and direct].",
+  },
+  {
+    id: "logo-concept",
+    title: "Logo concept",
+    category: "Image",
+    targetModel: "midjourney",
+    prompt:
+      "minimalist logo design for [BRAND/COMPANY NAME], [INDUSTRY], simple geometric shapes, flat vector style, two-color palette, clean lines, white background --ar 1:1 --v 6",
+  },
+  {
+    id: "concept-art",
+    title: "Concept art scene",
+    category: "Image",
+    targetModel: "dalle",
+    prompt:
+      "A detailed concept art illustration of [SCENE/CHARACTER/SETTING], in a [ART STYLE, e.g. painterly fantasy] style, with dramatic lighting and a strong sense of depth and atmosphere, digital painting quality.",
+  },
 ];
 
 export const PROMPT_LIBRARY_CATEGORIES = Array.from(new Set(PROMPT_LIBRARY.map((t) => t.category)));

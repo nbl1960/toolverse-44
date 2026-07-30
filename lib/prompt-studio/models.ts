@@ -1,5 +1,9 @@
 import type { TargetModel } from "./types";
 
+export const MIN_REQUEST_LENGTH = 4;
+export const MAX_REQUEST_LENGTH = 500;
+export const MAX_ANALYZER_LENGTH = 2000;
+
 /**
  * Each model's `description` is used directly in the transform prompt
  * sent to Gemini — real, established prompting conventions per model

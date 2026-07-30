@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
-import { PromptLibraryGrid } from "@/components/shared/prompt-library-grid";
+import { JsonLd } from "@/components/shared/json-ld";
+import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
 import { PROMPT_LIBRARY } from "@/lib/prompt-studio/library-content";
 import { buildMetadata } from "@/lib/seo";
 import { SITE_NAME } from "@/lib/site-config";
+
+const PromptLibraryGrid = dynamic(() =>
+  import("@/components/shared/prompt-library-grid").then((m) => ({ default: m.PromptLibraryGrid }))
+);
 
 export const metadata: Metadata = buildMetadata({
   title: "Prompt Library",
@@ -15,6 +21,7 @@ export const metadata: Metadata = buildMetadata({
 export default function PromptLibraryPage() {
   return (
     <div className="container py-8 sm:py-10">
+      <JsonLd data={buildBreadcrumbJsonLd([{ label: "Prompt Studio", href: "/prompt-studio" }, { label: "Library" }])} />
       <Breadcrumbs items={[{ label: "Prompt Studio", href: "/prompt-studio" }, { label: "Library" }]} />
 
       <div className="mt-4">

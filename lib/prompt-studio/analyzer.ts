@@ -1,5 +1,7 @@
 import type { AnalyzerCheck, AnalyzerResult } from "./types";
 
+const VAGUE_WORDS = ["something", "stuff", "things", "good", "nice", "better", "some", "etc"];
+
 /**
  * Deterministic, rule-based analysis — not an AI-generated score. A
  * "quality score out of 100" produced by asking an LLM to judge a
@@ -13,6 +15,7 @@ export function analyzePrompt(rawPrompt: string): AnalyzerResult {
   const prompt = rawPrompt.trim();
   const lower = prompt.toLowerCase();
   const wordCount = prompt.length === 0 ? 0 : prompt.split(/\s+/).length;
+  const vagueWordCount = VAGUE_WORDS.filter((w) => new RegExp(`\\b${w}\\b`, "i").test(lower)).length;
 
   const checks: AnalyzerCheck[] = [
     {
@@ -57,8 +60,31 @@ export function analyzePrompt(rawPrompt: string): AnalyzerResult {
       passed: wordCount >= 8,
       hint: "Very short prompts leave too much to interpretation — aim for at least a full sentence of detail.",
     },
+    {
+      id: "vague-language",
+      label: "Avoids vague filler words",
+      passed: wordCount === 0 || vagueWordCount === 0,
+      hint: 'Replace vague words like "stuff", "things", or "good" with specific nouns and outcomes.',
+    },
+    {
+      id: "negative-constraints",
+      label: "States what to avoid (optional but helpful)",
+      passed: /\b(avoid|don't|do not|without|never|no jargon|not too)\b/i.test(lower),
+      hint: 'Telling the model what NOT to do — e.g. "avoid jargon" — is often as useful as saying what to do.',
+    },
   ];
 
   const score = checks.filter((c) => c.passed).length;
   return { score, maxScore: checks.length, checks };
+}
+
+export type AnalyzerRating = "Needs work" | "Fair" | "Good" | "Excellent";
+
+/** A plain-language label for the score — a raw "5/9" is less immediately meaningful than "Good". */
+export function getAnalyzerRating(score: number, maxScore: number): AnalyzerRating {
+  const ratio = maxScore === 0 ? 0 : score / maxScore;
+  if (ratio >= 0.85) return "Excellent";
+  if (ratio >= 0.6) return "Good";
+  if (ratio >= 0.35) return "Fair";
+  return "Needs work";
 }

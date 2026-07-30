@@ -1,17 +1,26 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { Check, Copy, Loader2, Sparkles, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { usePromptEngine } from "@/hooks/use-prompt-engine";
-import { analyzePrompt } from "@/lib/prompt-studio/analyzer";
-import { TARGET_MODELS } from "@/lib/prompt-studio/models";
+import { analyzePrompt, getAnalyzerRating } from "@/lib/prompt-studio/analyzer";
+import type { AnalyzerRating } from "@/lib/prompt-studio/analyzer";
+import { MAX_REQUEST_LENGTH, MAX_ANALYZER_LENGTH, TARGET_MODELS } from "@/lib/prompt-studio/models";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import type { AnalyzerResult } from "@/lib/prompt-studio/types";
 
 type StudioMode = "engine" | "analyzer";
+
+const RATING_STYLES: Record<AnalyzerRating, string> = {
+  Excellent: "border-success/40 bg-success/10 text-success",
+  Good: "border-brass/40 bg-accent text-brass",
+  Fair: "border-border bg-muted text-muted-foreground",
+  "Needs work": "border-destructive/30 bg-destructive/10 text-destructive",
+};
 
 function useCopyToClipboard() {
   const [copied, setCopied] = React.useState(false);
@@ -41,11 +50,15 @@ function useCopyToClipboard() {
  * automatically (localStorage, see lib/prompt-history.ts).
  */
 export function PromptStudio() {
-  const [mode, setMode] = React.useState<StudioMode>("engine");
+  const searchParams = useSearchParams();
+  const initialText = searchParams.get("text") ?? "";
+  const initialMode: StudioMode = searchParams.get("mode") === "analyzer" ? "analyzer" : "engine";
+
+  const [mode, setMode] = React.useState<StudioMode>(initialMode);
   const engine = usePromptEngine();
   const { copied, copy } = useCopyToClipboard();
 
-  const [analyzerInput, setAnalyzerInput] = React.useState("");
+  const [analyzerInput, setAnalyzerInput] = React.useState(initialMode === "analyzer" ? initialText : "");
   const [analyzerResult, setAnalyzerResult] = React.useState<AnalyzerResult | null>(null);
 
   function handleEngineSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -104,8 +117,12 @@ export function PromptStudio() {
                 onChange={(e) => engine.setRequest(e.target.value)}
                 placeholder="Describe what you want, simply — e.g. write a blog post about coffee"
                 rows={3}
+                maxLength={MAX_REQUEST_LENGTH}
                 aria-label="Your rough request"
               />
+              <p className="mt-1 text-right font-mono text-[11px] text-muted-foreground">
+                {engine.request.length}/{MAX_REQUEST_LENGTH}
+              </p>
             </div>
 
             <div>
@@ -178,13 +195,19 @@ export function PromptStudio() {
       {mode === "analyzer" && (
         <div className="mt-6">
           <form onSubmit={handleAnalyze} className="flex flex-col gap-4" noValidate>
-            <Textarea
-              value={analyzerInput}
-              onChange={(e) => setAnalyzerInput(e.target.value)}
-              placeholder="Paste a prompt you're already using to see how it scores"
-              rows={4}
-              aria-label="Prompt to analyze"
-            />
+            <div>
+              <Textarea
+                value={analyzerInput}
+                onChange={(e) => setAnalyzerInput(e.target.value)}
+                placeholder="Paste a prompt you're already using to see how it scores"
+                rows={4}
+                maxLength={MAX_ANALYZER_LENGTH}
+                aria-label="Prompt to analyze"
+              />
+              <p className="mt-1 text-right font-mono text-[11px] text-muted-foreground">
+                {analyzerInput.length}/{MAX_ANALYZER_LENGTH}
+              </p>
+            </div>
             <Button type="submit" disabled={!analyzerInput.trim()} className="self-start">
               <Sparkles className="h-4 w-4" />
               Analyze prompt
@@ -196,6 +219,14 @@ export function PromptStudio() {
               <div className="flex items-center gap-3">
                 <span className="font-display text-2xl font-semibold text-foreground">
                   {analyzerResult.score}/{analyzerResult.maxScore}
+                </span>
+                <span
+                  className={cn(
+                    "rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide",
+                    RATING_STYLES[getAnalyzerRating(analyzerResult.score, analyzerResult.maxScore)]
+                  )}
+                >
+                  {getAnalyzerRating(analyzerResult.score, analyzerResult.maxScore)}
                 </span>
                 <span className="text-sm text-muted-foreground">practices followed</span>
               </div>

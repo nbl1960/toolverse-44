@@ -1,23 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateGeminiText } from "@/lib/gemini";
 import { createRateLimiter, getClientIp } from "@/lib/generator-api";
-import { getTargetModel, TARGET_MODELS } from "@/lib/prompt-studio/models";
+import { getTargetModel, TARGET_MODELS, MIN_REQUEST_LENGTH, MAX_REQUEST_LENGTH } from "@/lib/prompt-studio/models";
 import type { TargetModelId, TransformResponse } from "@/lib/prompt-studio/types";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const isRateLimited = createRateLimiter(15);
-const MIN_LENGTH = 4;
-const MAX_LENGTH = 500;
 const VALID_MODEL_IDS = TARGET_MODELS.map((m) => m.id);
+
+const CHAT_EXAMPLE = `Rough request: "help me write a resignation letter"
+Improved prompt: "You are a professional HR communications expert. Write a formal resignation letter for me, giving two weeks' notice, expressing gratitude for the opportunity, and offering to help with the transition. Keep it under 200 words and maintain a warm, professional tone throughout."`;
+
+const IMAGE_EXAMPLE = `Rough request: "a cat sitting on a windowsill"
+Improved prompt (Midjourney-style): "orange tabby cat sitting on a sunlit windowsill, soft morning light, shallow depth of field, cozy interior, photorealistic --ar 3:2 --v 6"`;
 
 function buildPrompt(request: string, targetModelId: TargetModelId): string {
   const model = getTargetModel(targetModelId);
   const convention = model?.description ?? "";
+  const example = model?.kind === "image" ? IMAGE_EXAMPLE : CHAT_EXAMPLE;
+
   return `You are a prompt engineering assistant. A user gives you a simple, rough request, and you rewrite it into a well-structured, professional prompt optimized specifically for ${model?.name ?? targetModelId}.
 
 Target model's effective prompting convention: ${convention}
+
+Example of the transformation style expected (illustrative only — do not reuse this example's topic):
+${example}
 
 User's rough request: "${request}"
 
@@ -52,14 +61,14 @@ export async function POST(request: NextRequest): Promise<NextResponse<Transform
 
     const { request: rawRequest, targetModel } = body as { request?: unknown; targetModel?: unknown };
 
-    if (typeof rawRequest !== "string" || rawRequest.trim().length < MIN_LENGTH) {
+    if (typeof rawRequest !== "string" || rawRequest.trim().length < MIN_REQUEST_LENGTH) {
       return NextResponse.json(
-        { success: false, error: `Describe what you want in at least ${MIN_LENGTH} characters.` },
+        { success: false, error: `Describe what you want in at least ${MIN_REQUEST_LENGTH} characters.` },
         { status: 400 }
       );
     }
-    if (rawRequest.trim().length > MAX_LENGTH) {
-      return NextResponse.json({ success: false, error: `Keep it under ${MAX_LENGTH} characters.` }, { status: 400 });
+    if (rawRequest.trim().length > MAX_REQUEST_LENGTH) {
+      return NextResponse.json({ success: false, error: `Keep it under ${MAX_REQUEST_LENGTH} characters.` }, { status: 400 });
     }
     if (typeof targetModel !== "string" || !VALID_MODEL_IDS.includes(targetModel as TargetModelId)) {
       return NextResponse.json({ success: false, error: "Choose a valid target model." }, { status: 400 });
