@@ -31,7 +31,7 @@ export function ContactForm({ initialType = "general" }: ContactFormProps) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-lg border border-border bg-card p-6 shadow-sm sm:p-7" noValidate>
       <div>
-        <Label>What's this about?</Label>
+        <Label>What&apos;s this about?</Label>
         <div role="radiogroup" aria-label="Request type" className="mt-2 grid grid-cols-2 gap-1 rounded-md border border-border bg-muted/40 p-1 sm:grid-cols-4">
           {CONTACT_TYPE_OPTIONS.map((option) => {
             const isSelected = values.type === option.value;

@@ -82,7 +82,7 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="font-display text-lg font-semibold text-foreground">Where we're headed</h2>
+            <h2 className="font-display text-lg font-semibold text-foreground">Where we&apos;re headed</h2>
             <p className="mt-3">
               We&apos;re expanding into a few areas that keep coming up: document tools, deeper
               category-specific suites, and continuing to make the AI Guide better at understanding

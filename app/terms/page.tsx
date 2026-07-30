@@ -37,9 +37,9 @@ export default function TermsPage() {
       <h2>Acceptable use</h2>
       <p>You agree not to:</p>
       <ul>
-        <li>Use the site's AI features to generate content that is illegal, harassing, or infringes someone else's rights.</li>
-        <li>Attempt to circumvent rate limits, scrape the site at a volume that degrades service for other users, or reverse-engineer the AI Guide's grounding logic to extract non-public information.</li>
-        <li>Use any tool to process content you don't have the legal right to process (for example, copyrighted material you don't own or have permission to use).</li>
+        <li>Use the site&apos;s AI features to generate content that is illegal, harassing, or infringes someone else&apos;s rights.</li>
+        <li>Attempt to circumvent rate limits, scrape the site at a volume that degrades service for other users, or reverse-engineer the AI Guide&apos;s grounding logic to extract non-public information.</li>
+        <li>Use any tool to process content you don&apos;t have the legal right to process (for example, copyrighted material you don&apos;t own or have permission to use).</li>
         <li>Use the site in any way that violates applicable law in your jurisdiction.</li>
       </ul>
 
