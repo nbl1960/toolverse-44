@@ -84,19 +84,50 @@ function expandQuery(query: string): string[] {
   return terms;
 }
 
+/**
+ * Safe indexed access into an array. The loops in `editDistance` below
+ * guarantee every index used here is in bounds by construction — but
+ * `noUncheckedIndexedAccess` (on in this project's tsconfig) can't prove
+ * that statically, since it doesn't reason about loop bounds. Throwing
+ * here rather than using a bare non-null assertion means a future edit
+ * that actually breaks the invariant fails loudly, instead of silently
+ * treating `undefined` as a valid value or crashing somewhere less
+ * obvious. Generic so it covers both the outer `number[][]` (selecting
+ * a row) and inner `number[]` (a cell within that row) indexing below.
+ */
+function at<T>(arr: T[], index: number): T {
+  const value = arr[index];
+  if (value === undefined) {
+    throw new Error(`editDistance: index ${index} out of bounds for array of length ${arr.length}`);
+  }
+  return value;
+}
+
 /** Cheap Levenshtein (edit) distance — fine at this scale (checked only against short tool names, only when the exact search comes up empty). */
 function editDistance(a: string, b: string): number {
   const rows = a.length + 1;
   const cols = b.length + 1;
-  const table: number[][] = Array.from({ length: rows }, (_, i) => [i, ...Array(cols - 1).fill(0)]);
-  for (let j = 0; j < cols; j++) table[0][j] = j;
+  const table: number[][] = Array.from({ length: rows }, () => new Array<number>(cols).fill(0));
+
+  for (let j = 0; j < cols; j++) at(table, 0)[j] = j;
+  for (let i = 0; i < rows; i++) at(table, i)[0] = i;
+
   for (let i = 1; i < rows; i++) {
+    // .charAt() returns a plain `string` (empty string if out of range),
+    // never `string | undefined` — unlike the `a[i]` index operator,
+    // it isn't affected by noUncheckedIndexedAccess, so no assertion or
+    // helper is needed here at all.
+    const charA = a.charAt(i - 1);
+    const prevRow = at(table, i - 1);
+    const currRow = at(table, i);
     for (let j = 1; j < cols; j++) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      table[i][j] = Math.min(table[i - 1][j] + 1, table[i][j - 1] + 1, table[i - 1][j - 1] + cost);
+      const charB = b.charAt(j - 1);
+      const cost = charA === charB ? 0 : 1;
+      currRow[j] = Math.min(at(prevRow, j) + 1, at(currRow, j - 1) + 1, at(prevRow, j - 1) + cost);
     }
   }
-  return table[rows - 1][cols - 1];
+
+  return at(at(table, rows - 1), cols - 1);
 }
 
 /**
