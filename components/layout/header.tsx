@@ -7,6 +7,7 @@ import { SITE_NAME } from "@/lib/site-config";
 
 const NAV_LINKS = [
   { href: "/copilot", label: "Copilot" },
+  { href: "/prompt-studio", label: "Prompt Studio" },
   { href: "/tools", label: "All Tools" },
   { href: "/categories", label: "Categories" },
   { href: "/dashboard", label: "Dashboard" },

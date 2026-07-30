@@ -1,0 +1,37 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Breadcrumbs } from "@/components/shared/breadcrumbs";
+import { PromptLibraryGrid } from "@/components/shared/prompt-library-grid";
+import { PROMPT_LIBRARY } from "@/lib/prompt-studio/library-content";
+import { buildMetadata } from "@/lib/seo";
+import { SITE_NAME } from "@/lib/site-config";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Prompt Library",
+  description: `${PROMPT_LIBRARY.length} ready-to-use prompt templates for ChatGPT, Claude, Gemini, Midjourney, and DALL·E — writing, coding, business, marketing, and more.`,
+  path: "/prompt-studio/library",
+});
+
+export default function PromptLibraryPage() {
+  return (
+    <div className="container py-8 sm:py-10">
+      <Breadcrumbs items={[{ label: "Prompt Studio", href: "/prompt-studio" }, { label: "Library" }]} />
+
+      <div className="mt-4">
+        <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          Prompt Library
+        </h1>
+        <p className="mt-1 max-w-lg text-sm text-muted-foreground sm:text-base">
+          {PROMPT_LIBRARY.length} ready-to-use prompt templates — copy one, fill in the bracketed
+          placeholder, and go. Want one built specifically for your request instead?{" "}
+          <Link href="/prompt-studio" className="font-medium text-brass hover:text-brass-dark">
+            Try the Prompt Engine
+          </Link>
+          .
+        </p>
+      </div>
+
+      <PromptLibraryGrid />
+    </div>
+  );
+}
