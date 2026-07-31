@@ -657,7 +657,7 @@ export const TOOLS: ToolDefinition[] = [
   {
     slug: "instagram-post-idea-generator",
     name: "Instagram Post Idea Generator",
-    tagline: "Never stare at a blank content calendar again.",
+    tagline: "Three post ideas, ready to shoot today.",
     description:
       "Generate three specific, ready-to-shoot Instagram post ideas from your account's niche.",
     category: "creator-studio",
