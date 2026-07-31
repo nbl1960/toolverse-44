@@ -19,63 +19,73 @@ export function analyzePrompt(rawPrompt: string): AnalyzerResult {
 
   const checks: AnalyzerCheck[] = [
     {
-      id: "role",
-      label: "Defines a role or persona",
-      passed: /\b(you are|act as|as an? |your role is)\b/i.test(prompt),
-      hint: 'Try starting with "You are a..." or "Act as a..." to anchor the response.',
-    },
-    {
       id: "task",
       label: "States a specific, actionable task",
       passed: wordCount >= 6 && /\b(write|create|generate|explain|summarize|list|analyze|design|build|draft|compare|translate|convert|review)\b/i.test(lower),
       hint: "Lead with a concrete action verb — write, create, explain, summarize, analyze — rather than a vague topic.",
+      weight: 4,
     },
     {
-      id: "context",
-      label: "Provides context or background",
-      passed: wordCount >= 20,
-      hint: "Add a sentence of background — who it's for, why it matters, what's already been tried.",
+      id: "role",
+      label: "Defines a role or persona",
+      passed: /\b(you are|act as|as an? |your role is)\b/i.test(prompt),
+      hint: 'Try starting with "You are a..." or "Act as a..." to anchor the response.',
+      weight: 3,
     },
     {
       id: "format",
       label: "Specifies the desired output format",
       passed: /\b(bullet|list|table|json|paragraph|steps?|outline|markdown|word count|words?|sentences?|headings?|sections?)\b/i.test(lower),
       hint: 'Specify how you want the answer structured — e.g. "as a bulleted list" or "in 3 short paragraphs".',
+      weight: 3,
     },
     {
       id: "constraints",
       label: "Includes constraints (length, tone, audience)",
       passed: /\b(tone|audience|beginner|expert|professional|casual|formal|concise|detailed|under \d+|at least|no more than|for a|aimed at)\b/i.test(lower),
       hint: 'Add constraints like tone ("professional"), audience ("for beginners"), or length ("under 200 words").',
+      weight: 3,
+    },
+    {
+      id: "context",
+      label: "Provides context or background",
+      passed: wordCount >= 20,
+      hint: "Add a sentence of background — who it's for, why it matters, what's already been tried.",
+      weight: 2,
     },
     {
       id: "examples",
       label: "Includes an example or reference",
       passed: /\b(for example|e\.g\.|such as|like this|similar to|here's an example)\b/i.test(lower),
       hint: "One concrete example dramatically improves output consistency — even a single sentence helps.",
+      weight: 2,
     },
     {
       id: "length",
       label: "Long enough to be actionable",
       passed: wordCount >= 8,
       hint: "Very short prompts leave too much to interpretation — aim for at least a full sentence of detail.",
+      weight: 1,
     },
     {
       id: "vague-language",
       label: "Avoids vague filler words",
       passed: wordCount === 0 || vagueWordCount === 0,
       hint: 'Replace vague words like "stuff", "things", or "good" with specific nouns and outcomes.',
+      weight: 1,
     },
     {
       id: "negative-constraints",
       label: "States what to avoid (optional but helpful)",
       passed: /\b(avoid|don't|do not|without|never|no jargon|not too)\b/i.test(lower),
       hint: 'Telling the model what NOT to do — e.g. "avoid jargon" — is often as useful as saying what to do.',
+      weight: 1,
     },
   ];
 
-  const score = checks.filter((c) => c.passed).length;
-  return { score, maxScore: checks.length, checks };
+  const maxScore = checks.reduce((sum, c) => sum + c.weight, 0);
+  const score = checks.filter((c) => c.passed).reduce((sum, c) => sum + c.weight, 0);
+  return { score, maxScore, checks };
 }
 
 export type AnalyzerRating = "Needs work" | "Fair" | "Good" | "Excellent";

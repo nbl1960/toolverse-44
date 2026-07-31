@@ -55,6 +55,17 @@ export function PromptStudio() {
   const initialMode: StudioMode = searchParams.get("mode") === "analyzer" ? "analyzer" : "engine";
 
   const [mode, setMode] = React.useState<StudioMode>(initialMode);
+  const engineTabRef = React.useRef<HTMLButtonElement>(null);
+  const analyzerTabRef = React.useRef<HTMLButtonElement>(null);
+
+  /** Standard ARIA tablist keyboard pattern: ArrowLeft/ArrowRight move focus AND activate the newly-focused tab (automatic activation model). */
+  function handleTabKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    const next: StudioMode = mode === "engine" ? "analyzer" : "engine";
+    setMode(next);
+    (next === "engine" ? engineTabRef : analyzerTabRef).current?.focus();
+  }
   const engine = usePromptEngine();
   const { copied, copy } = useCopyToClipboard();
 
@@ -78,12 +89,17 @@ export function PromptStudio() {
       <div
         role="tablist"
         aria-label="Prompt Studio mode"
+        onKeyDown={handleTabKeyDown}
         className="inline-flex rounded-md border border-border bg-muted/40 p-1"
       >
         <button
+          ref={engineTabRef}
           type="button"
           role="tab"
+          id="prompt-studio-tab-engine"
           aria-selected={mode === "engine"}
+          aria-controls="prompt-studio-panel-engine"
+          tabIndex={mode === "engine" ? 0 : -1}
           onClick={() => setMode("engine")}
           className={cn(
             "flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors",
@@ -94,9 +110,13 @@ export function PromptStudio() {
           Prompt Engine
         </button>
         <button
+          ref={analyzerTabRef}
           type="button"
           role="tab"
+          id="prompt-studio-tab-analyzer"
           aria-selected={mode === "analyzer"}
+          aria-controls="prompt-studio-panel-analyzer"
+          tabIndex={mode === "analyzer" ? 0 : -1}
           onClick={() => setMode("analyzer")}
           className={cn(
             "flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors",
@@ -109,7 +129,7 @@ export function PromptStudio() {
       </div>
 
       {mode === "engine" && (
-        <div className="mt-6">
+        <div id="prompt-studio-panel-engine" role="tabpanel" aria-labelledby="prompt-studio-tab-engine" className="mt-6">
           <form onSubmit={handleEngineSubmit} className="flex flex-col gap-4" noValidate>
             <div>
               <Textarea
@@ -193,7 +213,7 @@ export function PromptStudio() {
       )}
 
       {mode === "analyzer" && (
-        <div className="mt-6">
+        <div id="prompt-studio-panel-analyzer" role="tabpanel" aria-labelledby="prompt-studio-tab-analyzer" className="mt-6">
           <form onSubmit={handleAnalyze} className="flex flex-col gap-4" noValidate>
             <div>
               <Textarea
@@ -218,7 +238,7 @@ export function PromptStudio() {
             <div className="mt-6 animate-fade-up rounded-lg border border-border bg-card p-4 shadow-sm">
               <div className="flex items-center gap-3">
                 <span className="font-display text-2xl font-semibold text-foreground">
-                  {analyzerResult.score}/{analyzerResult.maxScore}
+                  {Math.round((analyzerResult.score / analyzerResult.maxScore) * 100)}%
                 </span>
                 <span
                   className={cn(
@@ -228,7 +248,9 @@ export function PromptStudio() {
                 >
                   {getAnalyzerRating(analyzerResult.score, analyzerResult.maxScore)}
                 </span>
-                <span className="text-sm text-muted-foreground">practices followed</span>
+                <span className="text-sm text-muted-foreground">
+                  ({analyzerResult.score}/{analyzerResult.maxScore} weighted points)
+                </span>
               </div>
               <div className="mt-4 flex flex-col gap-2">
                 {analyzerResult.checks.map((check) => (

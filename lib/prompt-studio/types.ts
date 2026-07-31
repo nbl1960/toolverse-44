@@ -1,4 +1,4 @@
-export type TargetModelId = "chatgpt" | "claude" | "gemini" | "midjourney" | "dalle";
+export type TargetModelId = "chatgpt" | "claude" | "gemini" | "grok" | "perplexity" | "deepseek" | "qwen" | "midjourney" | "dalle";
 
 export interface TargetModel {
   id: TargetModelId;
@@ -30,6 +30,8 @@ export interface AnalyzerCheck {
   label: string;
   passed: boolean;
   hint: string;
+  /** Relative importance — a missing task or role costs more than missing a negative constraint. Weights sum to 20 across all checks. */
+  weight: number;
 }
 
 export interface AnalyzerResult {

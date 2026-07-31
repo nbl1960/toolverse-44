@@ -37,6 +37,34 @@ export const TARGET_MODELS: TargetModel[] = [
       "Similar to ChatGPT — clear role, context, and task, with explicit output format instructions when structure matters.",
   },
   {
+    id: "grok",
+    name: "Grok",
+    kind: "chat",
+    description:
+      "Tolerates and often benefits from a more direct, informal register than other chat models — state the task plainly without excessive politeness padding, and it's comfortable with a candid, less risk-averse tone if you ask for one.",
+  },
+  {
+    id: "perplexity",
+    name: "Perplexity",
+    kind: "chat",
+    description:
+      "Search-augmented — frame the request as a research question that benefits from current, citable sources rather than a purely generative task, and explicitly ask for sources or a comparison across viewpoints when that matters.",
+  },
+  {
+    id: "deepseek",
+    name: "DeepSeek",
+    kind: "chat",
+    description:
+      "A strong reasoning model — explicitly asking it to think step by step or show its reasoning before the final answer noticeably improves output on non-trivial tasks, more so than with purely conversational models.",
+  },
+  {
+    id: "qwen",
+    name: "Qwen",
+    kind: "chat",
+    description:
+      "Also reasoning-oriented and multilingual-capable — benefits from explicit step-by-step instructions like DeepSeek, and from specifying the target language explicitly if the request isn't in English.",
+  },
+  {
     id: "midjourney",
     name: "Midjourney",
     kind: "image",

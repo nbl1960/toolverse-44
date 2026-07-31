@@ -13,13 +13,18 @@ const VALID_MODEL_IDS = TARGET_MODELS.map((m) => m.id);
 const CHAT_EXAMPLE = `Rough request: "help me write a resignation letter"
 Improved prompt: "You are a professional HR communications expert. Write a formal resignation letter for me, giving two weeks' notice, expressing gratitude for the opportunity, and offering to help with the transition. Keep it under 200 words and maintain a warm, professional tone throughout."`;
 
+const REASONING_EXAMPLE = `Rough request: "which of these two job offers is better"
+Improved prompt: "You are a career advisor. Compare these two job offers step by step — first evaluate compensation, then growth potential, then work-life balance, then culture fit — showing your reasoning for each before giving a final recommendation. Offer A: [DETAILS]. Offer B: [DETAILS]."`;
+
 const IMAGE_EXAMPLE = `Rough request: "a cat sitting on a windowsill"
 Improved prompt (Midjourney-style): "orange tabby cat sitting on a sunlit windowsill, soft morning light, shallow depth of field, cozy interior, photorealistic --ar 3:2 --v 6"`;
+
+const REASONING_MODEL_IDS: TargetModelId[] = ["deepseek", "qwen"];
 
 function buildPrompt(request: string, targetModelId: TargetModelId): string {
   const model = getTargetModel(targetModelId);
   const convention = model?.description ?? "";
-  const example = model?.kind === "image" ? IMAGE_EXAMPLE : CHAT_EXAMPLE;
+  const example = model?.kind === "image" ? IMAGE_EXAMPLE : REASONING_MODEL_IDS.includes(targetModelId) ? REASONING_EXAMPLE : CHAT_EXAMPLE;
 
   return `You are a prompt engineering assistant. A user gives you a simple, rough request, and you rewrite it into a well-structured, professional prompt optimized specifically for ${model?.name ?? targetModelId}.
 
