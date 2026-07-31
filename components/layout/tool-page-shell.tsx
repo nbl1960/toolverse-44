@@ -7,6 +7,7 @@ import { FormulaSection } from "@/components/shared/formula-section";
 import { ExampleCalculation } from "@/components/shared/example-calculation";
 import { JsonLd } from "@/components/shared/json-ld";
 import { FavoriteButton } from "@/components/shared/favorite-button";
+import { SaveToCollection } from "@/components/shared/save-to-collection";
 import { TrackToolVisit } from "@/components/shared/track-tool-visit";
 import { getCategoryBySlug } from "@/lib/categories";
 import { resolveIcon } from "@/lib/icon-map";
@@ -96,6 +97,7 @@ export function ToolPageShell({ tool, children }: ToolPageShellProps) {
             </span>
           )}
           <FavoriteButton slug={tool.slug} toolName={tool.name} />
+          <SaveToCollection toolSlug={tool.slug} toolName={tool.name} />
         </div>
       </div>
 
