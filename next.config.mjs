@@ -49,6 +49,33 @@ const nextConfig = {
           // modern browsers use CSP instead, but this is a harmless,
           // widely-recommended safety net.
           { key: "X-XSS-Protection", value: "1; mode=block" },
+          // Restricts which origins scripts/styles/images/connections can
+          // load from, as defense-in-depth against XSS. Scoped to the
+          // domains this app actually loads client-side — verified by
+          // grepping the real source, not guessed: Google Analytics
+          // (googletagmanager.com for the script, google-analytics.com/
+          // analytics.google.com for the beacon calls it makes),
+          // api.qrserver.com (the QR Code Generator's image), and
+          // img.youtube.com (the Thumbnail Downloader's previews).
+          // 'unsafe-inline' on script-src is required because Next.js
+          // itself injects inline hydration scripts without a nonce in
+          // this setup — a nonce-based strict CSP is possible but adds
+          // real complexity (per-request middleware nonce generation)
+          // that isn't worth the risk to add untested here.
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https://www.google-analytics.com https://api.qrserver.com https://img.youtube.com",
+              "font-src 'self' data:",
+              "connect-src 'self' https://www.google-analytics.com https://analytics.google.com",
+              "frame-ancestors 'none'",
+              "object-src 'none'",
+              "base-uri 'self'",
+            ].join("; "),
+          },
         ],
       },
       {
