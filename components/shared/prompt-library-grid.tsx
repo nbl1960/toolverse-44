@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Check, Copy, Heart, Search, Sparkles, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { PROMPT_LIBRARY, PROMPT_LIBRARY_CATEGORIES } from "@/lib/prompt-studio/library-content";
@@ -21,11 +22,34 @@ import { cn } from "@/lib/utils";
  * Component and export real metadata.
  */
 export function PromptLibraryGrid() {
-  const [query, setQuery] = React.useState("");
-  const [activeCategory, setActiveCategory] = React.useState<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [query, setQuery] = React.useState(searchParams.get("q") ?? "");
+  const [activeCategory, setActiveCategory] = React.useState<string | null>(searchParams.get("category"));
   const [favoritesOnly, setFavoritesOnly] = React.useState(false);
   const [favoriteIds, setFavoriteIds] = React.useState<string[]>([]);
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
+
+  // Keeps the URL in sync with search/category so a filtered view can be
+  // bookmarked or shared — replace (not push) so filtering doesn't spam
+  // the browser back-button history, scroll: false so adjusting a filter
+  // doesn't jerk the page back to the top, and debounced so typing a
+  // search query doesn't fire a router.replace on every keystroke —
+  // only once typing pauses. Category clicks are infrequent by nature,
+  // so the same debounce delay for both keeps this one simple effect
+  // rather than two.
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      const params = new URLSearchParams();
+      if (query.trim()) params.set("q", query.trim());
+      if (activeCategory) params.set("category", activeCategory);
+      const queryString = params.toString();
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [query, activeCategory, pathname, router]);
 
   React.useEffect(() => {
     setFavoriteIds(getFavoriteTemplateIds());

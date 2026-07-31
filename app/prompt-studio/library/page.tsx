@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
+import { Suspense } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { JsonLd } from "@/components/shared/json-ld";
 import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
 import { PROMPT_LIBRARY } from "@/lib/prompt-studio/library-content";
 import { buildMetadata } from "@/lib/seo";
-import { SITE_NAME } from "@/lib/site-config";
 
 const PromptLibraryGrid = dynamic(() =>
   import("@/components/shared/prompt-library-grid").then((m) => ({ default: m.PromptLibraryGrid }))
@@ -14,7 +14,7 @@ const PromptLibraryGrid = dynamic(() =>
 
 export const metadata: Metadata = buildMetadata({
   title: "Prompt Library",
-  description: `${PROMPT_LIBRARY.length} ready-to-use prompt templates for ChatGPT, Claude, Gemini, Midjourney, and DALL·E — writing, coding, business, marketing, and more.`,
+  description: `${PROMPT_LIBRARY.length} ready-to-use prompt templates for ChatGPT, Claude, Gemini, Grok, Perplexity, DeepSeek, Qwen, Midjourney, and DALL·E — writing, coding, business, marketing, and more.`,
   path: "/prompt-studio/library",
 });
 
@@ -38,7 +38,9 @@ export default function PromptLibraryPage() {
         </p>
       </div>
 
-      <PromptLibraryGrid />
+      <Suspense fallback={null}>
+        <PromptLibraryGrid />
+      </Suspense>
     </div>
   );
 }

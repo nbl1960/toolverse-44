@@ -21,7 +21,7 @@ const PromptHistoryPanel = dynamic(() =>
 
 export const metadata: Metadata = buildMetadata({
   title: "Prompt Studio",
-  description: `Turn a simple request into a professional, structured prompt optimized for ChatGPT, Claude, Gemini, Midjourney, or DALL·E — plus a prompt quality analyzer, all free on ${SITE_NAME}.`,
+  description: `Turn a simple request into a professional, structured prompt optimized for ChatGPT, Claude, Gemini, Grok, Perplexity, DeepSeek, Qwen, Midjourney, or DALL·E — plus a prompt quality analyzer, all free on ${SITE_NAME}.`,
   path: "/prompt-studio",
 });
 

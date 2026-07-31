@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
-import { Check, Copy, Loader2, Sparkles, Wand2 } from "lucide-react";
+import { Check, Copy, Loader2, RotateCcw, Sparkles, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { usePromptEngine } from "@/hooks/use-prompt-engine";
@@ -201,10 +201,16 @@ export function PromptStudio() {
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   Structured prompt for {TARGET_MODELS.find((m) => m.id === engine.targetModel)?.name}
                 </p>
-                <Button size="sm" variant="outline" onClick={() => copy(engine.structuredPrompt ?? "")}>
-                  {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                  {copied ? "Copied" : "Copy"}
-                </Button>
+                <div className="flex shrink-0 items-center gap-2">
+                  <Button size="sm" variant="outline" onClick={() => void engine.generate()} disabled={engine.isGenerating}>
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    Regenerate
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => copy(engine.structuredPrompt ?? "")}>
+                    {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                    {copied ? "Copied" : "Copy"}
+                  </Button>
+                </div>
               </div>
               <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground">{engine.structuredPrompt}</p>
             </div>
