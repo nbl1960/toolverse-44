@@ -53,8 +53,17 @@ const ROTATE_INTERVAL_MS = 2800;
  * uses.
  */
 export function AiAssistant() {
-  const { query, setQuery, recommendations, fallbackSuggestions, isSearching, errorMessage, search, clear } =
-    useAiAssistant();
+  const {
+    query,
+    setQuery,
+    recommendations,
+    fallbackSuggestions,
+    belowConfidenceThreshold,
+    isSearching,
+    errorMessage,
+    search,
+    clear,
+  } = useAiAssistant();
   const [rotatingIndex, setRotatingIndex] = React.useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -193,9 +202,14 @@ export function AiAssistant() {
           <div className="mt-8 animate-fade-up">
             {recommendations.length === 0 ? (
               <div className="rounded-lg border border-dashed border-border bg-card px-6 py-8 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Nothing in the catalog matches that yet — but new tools ship all the time.
+                <p className="text-sm font-medium text-foreground">
+                  {belowConfidenceThreshold
+                    ? "I couldn't find a perfect match."
+                    : "Nothing in the catalog matches that yet — but new tools ship all the time."}
                 </p>
+                {belowConfidenceThreshold && (
+                  <p className="mt-1 text-sm text-muted-foreground">Try these related tools.</p>
+                )}
                 {fallbackSuggestions && fallbackSuggestions.length > 0 && (
                   <div className="mt-5">
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -241,7 +255,10 @@ export function AiAssistant() {
                                   CONFIDENCE_STYLES[rec.confidence]
                                 )}
                               >
-                                {rec.confidence}
+                                {rec.confidence} · {rec.confidenceScore}%
+                              </span>
+                              <span className="rounded-full border border-success/40 bg-success/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-success">
+                                {rec.pricing}
                               </span>
                             </div>
                             <p className="mt-1 text-xs font-medium uppercase tracking-wide text-muted-foreground/80">

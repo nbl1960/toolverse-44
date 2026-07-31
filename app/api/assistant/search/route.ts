@@ -11,9 +11,9 @@ import {
 } from "@/lib/ai-assistant/catalog";
 import { getToolBySlug } from "@/lib/tools-registry";
 import {
-  MATCH_CONFIDENCE_VALUES,
+  confidenceScoreToTier,
+  MIN_CONFIDENCE_SCORE,
   type AssistantSearchResponse,
-  type MatchConfidence,
   type RawAssistantMatch,
 } from "@/lib/ai-assistant/types";
 
@@ -37,7 +37,11 @@ function logDev(label: string, value: unknown) {
  * output at the token-sampling level rather than just asking nicely in
  * the prompt. Combined with `responseMimeType: "application/json"` (set
  * on the fetch call below), Gemini is guaranteed to return valid JSON
- * matching this exact shape.
+ * matching this exact shape. `confidence` is a plain integer here —
+ * Gemini never assigns the "Best Match"/"Good Match"/"Related" label
+ * directly; that's derived deterministically from the number server-side
+ * (see confidenceScoreToTier), so a result can never claim a tier that
+ * contradicts its own score.
  */
 const RESPONSE_SCHEMA = {
   type: "object",
@@ -49,7 +53,7 @@ const RESPONSE_SCHEMA = {
         properties: {
           slug: { type: "string" },
           reason: { type: "string" },
-          confidence: { type: "string", enum: MATCH_CONFIDENCE_VALUES },
+          confidence: { type: "integer" },
         },
         required: ["slug", "reason", "confidence"],
         propertyOrdering: ["slug", "reason", "confidence"],
@@ -69,13 +73,13 @@ User's request: "${query}"
 
 Task:
 1. Recommend up to ${MAX_RECOMMENDATIONS} tools that genuinely help with this request, ranked most relevant first.
-2. For each, assign a confidence tier — exactly one of: "Best Match" (directly and precisely does what was asked), "Good Match" (clearly helps, maybe with one extra step), or "Related" (adjacent/useful but not a direct fit).
+2. For each, assign a confidence score from 0 to 100 reflecting how well it actually fits: 80-100 means it directly and precisely does what was asked, 60-79 means it clearly helps but maybe with an extra step, below 60 means it's only loosely related.
 3. For each, write one short, specific sentence (under 20 words) explaining why THIS tool fits THIS request — not a generic description of the tool.
 
 Rules:
 - ONLY use slugs copied exactly from the catalog above. Never invent a slug, a tool, or a variation of a slug that isn't listed verbatim.
 - If nothing in the catalog is a good match for the request, return an empty "recommendations" array rather than forcing a weak or unrelated match. Do not pad the list to reach 5.
-- Be honest about confidence: don't call something a "Best Match" just to have one — if the closest thing is only "Related", say so.`;
+- Be honest about the score: don't inflate a loose or partial fit into an 80+ just to seem confident. A genuinely poor fit should score low, even if it's the closest thing available.`;
 }
 
 /** Thrown when a Gemini response can't be turned into a usable recommendation list at all — distinct from individual items being dropped, which is normal and expected. */
@@ -163,8 +167,10 @@ async function fetchRecommendationsWithRetry(prompt: string, apiKey: string): Pr
   throw new UnparseableAssistantResponse("Unexpected retry loop exit.");
 }
 
-function isValidConfidence(value: unknown): value is MatchConfidence {
-  return typeof value === "string" && (MATCH_CONFIDENCE_VALUES as string[]).includes(value);
+/** Never trusts Gemini's number blindly — clamps to a valid 0-100 integer, defaulting to 0 (not 100) if the value is missing or malformed, so a bad value can never accidentally look confident. */
+function sanitizeConfidenceScore(value: unknown): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(100, Math.round(value)));
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse<AssistantSearchResponse>> {
@@ -229,23 +235,20 @@ export async function POST(request: NextRequest): Promise<NextResponse<Assistant
     }
 
     // The critical grounding step: Gemini's job was only to pick slugs,
-    // write reasons, and assign a confidence tier. Every other field
-    // shown to the user — name, tagline, category, icon, route, related
-    // tools — comes from OUR OWN registry via getToolBySlug() and
-    // getRelatedToolLinks(), never from the model's text. Any slug that
-    // doesn't actually exist (a hallucination) is silently dropped here,
-    // not surfaced as an error — the user just sees fewer, all-real
-    // results. An invalid/missing confidence value is never trusted
-    // either — it falls back to the lowest-confidence label. (The
-    // schema's enum already constrains this at generation time, but
-    // this check stays as defense-in-depth rather than assuming the
-    // schema constraint can never be bypassed.)
+    // write reasons, and assign a numeric confidence score. Every other
+    // field shown to the user — name, tagline, category, icon, route,
+    // pricing, related tools, and even the confidence TIER label — comes
+    // from OUR OWN registry or is derived deterministically, never taken
+    // from the model's text directly. Any slug that doesn't actually
+    // exist (a hallucination) is silently dropped here, not surfaced as
+    // an error — the user just sees fewer, all-real results.
     const seen = new Set<string>();
-    const recommendations = rawMatches
+    const allRecommendations = rawMatches
       .map((match) => {
         const tool = getToolBySlug(match.slug);
         if (!tool || tool.status !== "live" || seen.has(tool.slug)) return null;
         seen.add(tool.slug);
+        const confidenceScore = sanitizeConfidenceScore(match.confidence);
         return {
           slug: tool.slug,
           name: tool.name,
@@ -253,19 +256,31 @@ export async function POST(request: NextRequest): Promise<NextResponse<Assistant
           category: tool.category,
           iconName: tool.iconName,
           reason: match.reason.trim(),
-          confidence: isValidConfidence(match.confidence) ? match.confidence : ("Related" as const),
+          confidenceScore,
+          confidence: confidenceScoreToTier(confidenceScore),
+          pricing: "Free" as const,
           route: `/tools/${tool.slug}`,
           relatedTools: getRelatedToolLinks(tool.slug),
         };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null)
+      .sort((a, b) => b.confidenceScore - a.confidenceScore)
       .slice(0, MAX_RECOMMENDATIONS);
+
+    // If the single best result still doesn't clear the confidence bar,
+    // don't show a page of weak matches presented as if they were good
+    // ones — show the honest "no confident match" state instead, with
+    // real fallback suggestions rather than a dead end.
+    const bestScore = allRecommendations[0]?.confidenceScore ?? 0;
+    const belowThreshold = allRecommendations.length === 0 || bestScore < MIN_CONFIDENCE_SCORE;
 
     return NextResponse.json(
       {
         success: true,
-        recommendations,
-        ...(recommendations.length === 0 ? { fallbackSuggestions: getFallbackSuggestions() } : {}),
+        recommendations: belowThreshold ? [] : allRecommendations,
+        ...(belowThreshold
+          ? { fallbackSuggestions: getFallbackSuggestions(), belowConfidenceThreshold: true }
+          : {}),
       },
       { status: 200 }
     );

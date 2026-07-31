@@ -62,9 +62,12 @@ function getSearchIndex(): IndexEntry[] {
 const SYNONYMS: Record<string, string[]> = {
   pic: ["image", "photo", "picture"],
   photo: ["image", "picture"],
+  image: ["photo", "picture"],
   pw: ["password"],
   pwd: ["password"],
   vid: ["video"],
+  video: ["movie"],
+  movie: ["video"],
   yt: ["youtube"],
   ig: ["instagram"],
   li: ["linkedin"],
@@ -76,6 +79,20 @@ const SYNONYMS: Record<string, string[]> = {
   qr: ["code", "scanner"],
   seo: ["search", "ranking"],
   ai: ["generator", "writer"],
+  logo: ["design", "branding"],
+  design: ["logo", "branding"],
+  branding: ["logo", "design"],
+  pdf: ["document"],
+  document: ["pdf"],
+  website: ["web app", "web"],
+  presentation: ["ppt", "slides"],
+  ppt: ["presentation", "slides"],
+  coding: ["programming", "developer"],
+  programming: ["coding", "developer"],
+  "3d": ["model"],
+  model: ["3d"],
+  voice: ["speech", "audio"],
+  speech: ["voice", "audio"],
 };
 
 function expandQuery(query: string): string[] {

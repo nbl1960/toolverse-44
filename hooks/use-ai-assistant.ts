@@ -13,6 +13,8 @@ interface UseAiAssistantResult {
   setQuery: (value: string) => void;
   recommendations: AssistantRecommendation[] | null;
   fallbackSuggestions: AssistantRelatedTool[] | null;
+  /** True when a search completed but the best result didn't clear the confidence bar — distinct from "zero recommendations returned for another reason," though both currently render the same fallback UI. */
+  belowConfidenceThreshold: boolean;
   isSearching: boolean;
   errorMessage: string | null;
   search: () => Promise<void>;
@@ -24,6 +26,7 @@ export function useAiAssistant(): UseAiAssistantResult {
   const [query, setQuery] = React.useState("");
   const [recommendations, setRecommendations] = React.useState<AssistantRecommendation[] | null>(null);
   const [fallbackSuggestions, setFallbackSuggestions] = React.useState<AssistantRelatedTool[] | null>(null);
+  const [belowConfidenceThreshold, setBelowConfidenceThreshold] = React.useState(false);
   const [isSearching, setIsSearching] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
@@ -52,6 +55,7 @@ export function useAiAssistant(): UseAiAssistantResult {
 
       setRecommendations(data.recommendations);
       setFallbackSuggestions(data.fallbackSuggestions ?? null);
+      setBelowConfidenceThreshold(data.belowConfidenceThreshold ?? false);
     } catch {
       const message = "Couldn't reach the assistant. Check your connection and try again.";
       setErrorMessage(message);
@@ -65,8 +69,19 @@ export function useAiAssistant(): UseAiAssistantResult {
     setQuery("");
     setRecommendations(null);
     setFallbackSuggestions(null);
+    setBelowConfidenceThreshold(false);
     setErrorMessage(null);
   }, []);
 
-  return { query, setQuery, recommendations, fallbackSuggestions, isSearching, errorMessage, search, clear };
+  return {
+    query,
+    setQuery,
+    recommendations,
+    fallbackSuggestions,
+    belowConfidenceThreshold,
+    isSearching,
+    errorMessage,
+    search,
+    clear,
+  };
 }
