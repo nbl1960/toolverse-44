@@ -21,6 +21,7 @@ const COMPANY_LINKS = [
   { href: "/contact", label: "Contact" },
   { href: "/blog", label: "Blog" },
   { href: "/roadmap", label: "Roadmap" },
+  { href: "/changelog", label: "Changelog" },
 ];
 
 const RESOURCE_LINKS = [
@@ -28,6 +29,8 @@ const RESOURCE_LINKS = [
   { href: "/help", label: "Help Center" },
   { href: "/contact?type=bug", label: "Report a Bug" },
   { href: "/contact?type=feature", label: "Request a Feature" },
+  { href: "/suggest-a-tool", label: "Suggest a Tool" },
+  { href: "/newsletter", label: "Newsletter" },
 ];
 
 const LEGAL_LINKS = [
