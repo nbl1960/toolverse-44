@@ -46,6 +46,15 @@ export function SaveToCollection({ toolSlug, toolName }: SaveToCollectionProps) 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
+  React.useEffect(() => {
+    if (!isOpen) return;
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setIsOpen(false);
+    }
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isOpen]);
+
   function handleToggleCollection(collectionId: string, isInCollection: boolean) {
     if (isInCollection) {
       setCollections(removeToolFromCollection(collectionId, toolSlug));

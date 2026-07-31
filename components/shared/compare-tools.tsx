@@ -72,6 +72,9 @@ export function CompareTools() {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setQuery("");
+            }}
             placeholder={`Add a tool to compare (${selectedSlugs.length}/${MAX_COMPARE_TOOLS})`}
             className="pl-9"
             aria-label="Search for a tool to add to the comparison"
